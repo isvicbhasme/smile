@@ -7,19 +7,23 @@
   </ion-header-bar>
   <ion-content>
     <form ng-submit="doLogin()">
+      <div class="error" style="display:none"></div>
       <div class="list">
-        <label class="item item-input">
+        <label class="item item-input item-floating-label">
           <span class="input-label">Username</span>
-          <input type="text" ng-model="loginData.username">
+          <input type="text" placeholder="Username" ng-model="loginData.username">
         </label>
-        <label class="item item-input">
+        <label class="item item-input item-floating-label">
           <span class="input-label">Password</span>
-          <input type="password" ng-model="loginData.password">
+          <input type="password" placeholder="Password" ng-model="loginData.password">
         </label>
         <label class="item">
-          <button class="button button-block button-positive" type="submit">Log in</button>
+          <button class="button button-block button-full button-balanced" type="submit">Log in</button>
         </label>
       </div>
     </form>
+    <button class="button button-clear button-positive icon-left ion-compose" ng-click="showRegistration()">Register</button>
+    </br>
+    <button class="button button-clear button-positive icon-left ion-compose">Forgot password</button>
   </ion-content>
 </ion-modal-view>
