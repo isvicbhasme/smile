@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 
-angular.module('starter', ['ionic', 'starter.controllers'])
+angular.module('app', ['ionic', 'app.controllers'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -63,15 +63,25 @@ angular.module('starter', ['ionic', 'starter.controllers'])
     }
   })
 
-  .state('app.register', {
+  .state('login', {
+    url: '/login',
+    // views: {
+      // 'menuContent' : {
+        templateUrl: 'templates/login.html',
+        controller: 'AppCtrl'
+      // }
+    // }
+  })
+
+  .state('register', {
     url: '/register',
-    views: {
-      'menuContent' : {
+    // views: {
+    //   'menuContent' : {
         templateUrl: 'templates/register.html',
         controller: 'RegisterCtrl'
-      }
-    }
+    //   }
+    // }
   });
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/app/articles');
+  $urlRouterProvider.otherwise('/login');
 });

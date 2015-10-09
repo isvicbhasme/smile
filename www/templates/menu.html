@@ -18,18 +18,14 @@
     </ion-header-bar>
     <ion-content>
       <ion-list>
-        <ion-item menu-close ng-if="false == userAuthenticated" ng-click="showlogin()">
-          Login
-        </ion-item>
-        <ion-item menu-close ng-if="true == userAuthenticated" ng-click="logout()">
-          Logout
-        </ion-item>
-        <ion-item menu-close href="#/app/leaves">
-          Leaves
-        </ion-item>
-        <ion-item menu-close href="#/app/articles">
-          Articles
-        </ion-item>
+        <div ng-repeat="menuItem in menuItems">
+          <ion-item menu-close ng-if="menuItem.isLink" ng-href="{{menuItem.link}}">
+            {{menuItem.name}}
+          </ion-item>
+          <ion-item menu-close ng-if="false == menuItem.isLink" ng-click="{{menuItem.clickAction}}">
+            {{menuItem.name}}
+          </ion-item>
+        </div>
       </ion-list>
     </ion-content>
   </ion-side-menu>

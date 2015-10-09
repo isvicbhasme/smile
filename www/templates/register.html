@@ -1,27 +1,28 @@
 <ion-view view-title="Registration">
+	<ion-header-bar>
+    <h1 class="title">Registration</h1>
+  </ion-header-bar>
   <ion-content>
-    <form ng-submit="onRegister()">
+    <form name="registerForm" ng-submit="onRegister()" novalidate>
       <div class="list">
-        <label class="item item-input item-floating-label">
-          <span class="input-label">Username</span>
-          <input type="text" placeholder="Username" ng-model="registerData.username">
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.username.$invalid, 'no-errors': registerForm.username.$valid }">
+          <input type="text" name="username" placeholder="Username" ng-model="registerData.username" required />
         </label>
-        <label class="item item-input item-floating-label">
-          <span class="input-label">Email</span>
-          <input type="email" placeholder="Email" ng-model="registerData.email">
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.email.$invalid, 'no-errors': registerForm.email.$valid }">
+          <input type="email" name="email" placeholder="Email" ng-model="registerData.email" required>
         </label>
-        <label class="item item-input item-floating-label">
-          <span class="input-label" autocomplete="off">Password</span>
-          <input type="password" placeholder="Password" ng-model="registerData.password">
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$invalid, 'no-errors': registerForm.password.$valid }">
+          <input type="password" name="password" placeholder="Password" ng-model="registerData.password" required>
         </label>
-        <label class="item item-input item-floating-label">
-          <span class="input-label" autocomplete="off">Confirm Password</span>
-          <input type="password" placeholder="Confirm Password" ng-model="registerData.confirmPassword">
+        <label class="item item-input" ng-class="{ 'has-errors': 'registerForm.confirmPassword.$invalid || registerForm.password.$modelValue != registerForm.confirmPassword.$modelValue', 'no-errors': registerForm.confirmPassword.$valid && registerForm.password.$modelValue === registerForm.confirmPassword.$modelValue }">
+          <input type="password" name="confirmPassword" placeholder="Confirm Password" ng-model="registerData.confirmPassword" required>
         </label>
-        <label class="item">
-          <button class="button button-block button-full button-balanced" type="submit">Register</button>
-        </label>
+          <button class="button button-block button-full button-balanced" ng-disabled="registerForm.$invalid" type="submit">Register</button>
       </div>
     </form>
+    <div ng-messages="registerForm.username.$error"> 
+     <p class=".has-errors" ng-message="required">Please enter your username</p>
+    </div>
+    <a class="button button-clear button-positive icon-left ion-compose" ng-href="#/login">I already have an account</a>
   </ion-content>
 </ion-view>

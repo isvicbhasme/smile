@@ -1,28 +1,7 @@
-var appModule = angular.module('starter.controllers', []);
+'use strict';
+var appModule = angular.module('app.controllers', ['app.services']);
 
-appModule.factory('AuthService', function(){
-  var isAuthenticated = false;
-  var username = '';
-  var role = 'GUEST';
-
-  var setUserInfo = function(user) {
-    isAuthenticated = user.authenticated();
-    username = user.getUsername();
-  }
-
-  var clearUser = function() {
-    isAuthenticated = false;
-    username = '';
-  }
-
-  return { 
-    setUserInfo: setUserInfo,
-    clearUser: clearUser,
-    isAuthenticated: isAuthenticated
-    };
-});
-
-appModule.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, AuthService) {
+appModule.controller('AppCtrl', function($scope, $state, AuthService, MenuListService, HistoryService) {
 
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -30,33 +9,44 @@ appModule.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, 
   // listen for the $ionicView.enter event:
   // $scope.$on('$ionicView.enter', function(e) {
   // });
-  $scope.userAuthenticated = AuthService.isAuthenticated;
-  console.log("Entering ionic view, isAuthenticated:"+$scope.userAuthenticated);
 
   // Form data for the login modal
-  $scope.loginData = {};
+  $scope.loginData = {
+    username: ''
+  };
+  $scope.temp = AuthService.verifyAuthentication();
+  var isLoggedIn = AuthService.getIsAuthenticated();
+  $scope.menuItems = MenuListService.getMenuList(isLoggedIn);
+  if(isLoggedIn) {
+    console.log("Already logged in");
+    HistoryService.clearAllAndDontStoreThisPage();
+    $state.go('app.articles');
+  }
 
   // Create the login modal that we will use later
-  $ionicModal.fromTemplateUrl('templates/login.html', {
-    scope: $scope
-  }).then(function(modal) {
-    $scope.modal = modal;
-  });
+  // $ionicModal.fromTemplateUrl('templates/login.html', {
+  //   scope: $scope
+  // }).then(function(modal) {
+  //   $scope.modal = modal;
+  // });
 
   // Triggered in the login modal to close it
-  $scope.closeLogin = function() {
-    $scope.modal.hide();
-  };
+  // $scope.closeLogin = function() {
+  //   $scope.modal.hide();
+  // };
 
   // Open the login modal
-  $scope.showlogin = function() {
-    $scope.modal.show();
-  };
+  // $scope.showlogin = function() {
+  //   $scope.modal.show();
+  // };
 
   $scope.logout = function() {
     Parse.User.logOut().then(
       function(){
+      HistoryService.clearAllAndDontStoreThisPage();
       AuthService.clearUser();
+      $scope.menuItems = MenuListService.getMenuList(AuthService.getIsAuthenticated());
+      $state.go('login');
     }, function(error) {
         alert("Error: " + error.code + " " + error.message);
     });
@@ -66,9 +56,10 @@ appModule.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, 
   $scope.doLogin = function() {
     Parse.User.logIn($scope.loginData.username, $scope.loginData.password)
     .then(function(user) {
+      HistoryService.clearAllAndDontStoreThisPage();
       console.log(user);
       AuthService.setUserInfo(user);
-      $scope.modal.hide();
+      $scope.menuItems = MenuListService.getMenuList(AuthService.getIsAuthenticated());
       $state.go('app.articles');
     },function(error) {
       alert("Error: " + error.code + " " + error.message);
@@ -77,8 +68,7 @@ appModule.controller('AppCtrl', function($scope, $ionicModal, $timeout, $state, 
   };
 
   $scope.showRegistration = function() {
-    $scope.modal.hide();
-    $state.go('app.register');
+    $state.go('register');
   };
 });
 

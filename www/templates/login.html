@@ -1,29 +1,22 @@
-<ion-modal-view>
+<ion-view view-title="Login">
   <ion-header-bar>
     <h1 class="title">Login</h1>
-    <div class="buttons">
-      <button class="button button-clear" ng-click="closeLogin()">Close</button>
-    </div>
   </ion-header-bar>
   <ion-content>
-    <form ng-submit="doLogin()">
+    <form name="loginForm" ng-submit="doLogin()" novalidate>
       <div class="error" style="display:none"></div>
-      <div class="list">
-        <label class="item item-input item-floating-label">
-          <span class="input-label">Username</span>
-          <input type="text" placeholder="Username" ng-model="loginData.username">
+      <div class="list list-inset">
+        <label class="item item-input" ng-class="{ 'has-errors' : loginForm.username.$invalid, 'no-errors' : loginForm.username.$valid}">
+          <input type="text" name="username" placeholder="Username" ng-model="loginData.username" required>
         </label>
-        <label class="item item-input item-floating-label">
-          <span class="input-label">Password</span>
-          <input type="password" placeholder="Password" ng-model="loginData.password">
+        <label class="item item-input" ng-class="{ 'has-errors' : loginForm.password.$invalid, 'no-errors' : loginForm.password.$valid}">
+          <input type="password" name="password" placeholder="Password" ng-model="loginData.password" required minlength="6" maxlength="20">
         </label>
-        <label class="item">
-          <button class="button button-block button-full button-balanced" type="submit">Log in</button>
-        </label>
+        <button class="button button-block button-balanced" ng-disabled="loginForm.$invalid" type="submit">Log in</button>
       </div>
     </form>
-    <button class="button button-clear button-positive icon-left ion-compose" ng-click="showRegistration()">Register</button>
+    <a class="button button-clear button-positive icon-left ion-compose" ng-href="#/register">Register</a>
     </br>
     <button class="button button-clear button-positive icon-left ion-compose">Forgot password</button>
   </ion-content>
-</ion-modal-view>
+</ion-view>
