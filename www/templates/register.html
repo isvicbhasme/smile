@@ -3,26 +3,52 @@
     <h1 class="title">Registration</h1>
   </ion-header-bar>
   <ion-content>
+  <script type="text/ng-template" id="error-messages">
+	  <div ng-message="required">This field is required</div>
+	  <div ng-message="email">Enter a valid email address</div>
+	</script>
     <form name="registerForm" ng-submit="onRegister()" novalidate>
       <div class="list">
+      	<!-- Username -->
         <label class="item item-input" ng-class="{ 'has-errors': registerForm.username.$invalid, 'no-errors': registerForm.username.$valid }">
-          <input type="text" name="username" placeholder="Username" ng-model="registerData.username" required />
+          <input type="text" name="username" placeholder="Username" ng-model="registerData.username" ng-required="true"/>
         </label>
+        <div ng-messages="registerForm.username.$error" role="alert">
+			    <div ng-messages-include="error-messages"></div>
+		 	  </div>
+
+		 	  <!-- Email -->
         <label class="item item-input" ng-class="{ 'has-errors': registerForm.email.$invalid, 'no-errors': registerForm.email.$valid }">
-          <input type="email" name="email" placeholder="Email" ng-model="registerData.email" required>
+          <input type="email" name="email" placeholder="Email" ng-model="registerData.email" ng-required="true" />
         </label>
+        <div ng-messages="registerForm.email.$error" role="alert">
+			    <div ng-messages-include="error-messages"></div>
+		 	  </div>
+
+		 	  <!-- Password -->
         <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$invalid, 'no-errors': registerForm.password.$valid }">
-          <input type="password" name="password" placeholder="Password" ng-model="registerData.password" required>
+          <input type="password" name="password" placeholder="Password" ng-minlength="6" ng-maxlength="14" ng-model="registerData.pwd" ng-required="true" />
         </label>
-        <label class="item item-input" ng-class="{ 'has-errors': 'registerForm.confirmPassword.$invalid || registerForm.password.$modelValue != registerForm.confirmPassword.$modelValue', 'no-errors': registerForm.confirmPassword.$valid && registerForm.password.$modelValue === registerForm.confirmPassword.$modelValue }">
-          <input type="password" name="confirmPassword" placeholder="Confirm Password" ng-model="registerData.confirmPassword" required>
+        <div ng-messages="registerForm.password.$error" role="alert">
+        	<div ng-messages-include="error-messages"></div>
+	  			<div ng-message="minlength, maxlength">Password length 6 to 14 chars</div>
+		 	  </div>
+
+		 	  <!-- Confirm Password -->
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$modelValue !== registerForm.confPassword.$modelValue, 'no-errors': registerForm.password.$modelValue === registerForm.confPassword.$modelValue }">
+          <input type="password" name="confPassword" placeholder="Confirm Password" ng-model="registerData.confirmPassword" ng-pattern="{{registerForm.password.$viewValue}}" ng-required="true" />
         </label>
-          <button class="button button-block button-full button-balanced" ng-disabled="registerForm.$invalid" type="submit">Register</button>
+        <div ng-messages="registerForm.confPassword.$error" role="alert">
+        	<div ng-messages-include="error-messages"></div>
+        	<div ng-message="pattern">Your passwords do not match</div>
+		 	  </div>
+        
+        <!-- Submit -->
+        <label class="item">
+        	<button class="button button-block button-full button-balanced" ng-disabled="registerForm.$invalid" type="submit">Register</button>
+        </label>
       </div>
     </form>
-    <div ng-messages="registerForm.username.$error"> 
-     <p class=".has-errors" ng-message="required">Please enter your username</p>
-    </div>
     <a class="button button-clear button-positive icon-left ion-compose" ng-href="#/login">I already have an account</a>
   </ion-content>
 </ion-view>
