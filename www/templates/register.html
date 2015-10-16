@@ -27,7 +27,7 @@
 		 	  </div>
 
 		 	  <!-- Password -->
-        <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$touched registerForm.password.$invalid}">
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$touched && registerForm.password.$invalid}">
           <input type="password" name="password" placeholder="Password" ng-minlength="registerData.minPasswordLength" ng-maxlength="registerData.maxPasswordLength" ng-model="registerData.pwd" ng-required="true" />
         </label>
         <div ng-messages="registerForm.password.$error" ng-show="registerForm.password.$touched" role="alert">
@@ -37,7 +37,7 @@
 
 		 	  <!-- Confirm Password -->
         <label class="item item-input" ng-class="{ 'has-errors': registerForm.confPassword.$touched && (registerForm.password.$invalid || registerForm.password.$modelValue !== registerForm.confPassword.$modelValue)}">
-          <input type="password" name="confPassword" placeholder="Confirm Password" ng-model="registerData.confirmPassword" ng-pattern="{{registerForm.password.$viewValue}}" ng-required="true" />
+          <input type="password" name="confPassword" placeholder="Confirm Password" ng-model="registerData.confirmPassword" ng-pattern="^{{registerForm.password.$viewValue}}$" ng-required="true" />
         </label>
         <div ng-messages="registerForm.confPassword.$error" ng-show="registerForm.confPassword.$touched" role="alert">
         	<div ng-messages-include="error-messages"></div>
