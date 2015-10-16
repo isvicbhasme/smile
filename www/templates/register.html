@@ -4,43 +4,44 @@
   </ion-header-bar>
   <ion-content>
   <script type="text/ng-template" id="error-messages">
-	  <div ng-message="required">This field is required</div>
-	  <div ng-message="email">Enter a valid email address</div>
+	  <div class="error-msg" ng-message="required">This field is required</div>
+	  <div class="error-msg" ng-message="email">Enter a valid email address</div>
 	</script>
     <form name="registerForm" ng-submit="onRegister()" novalidate>
       <div class="list">
       	<!-- Username -->
-        <label class="item item-input" ng-class="{ 'has-errors': registerForm.username.$invalid, 'no-errors': registerForm.username.$valid }">
-          <input type="text" name="username" placeholder="Username" ng-model="registerData.username" ng-required="true"/>
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.username.$touched && registerForm.username.$invalid}">
+          <input type="text" name="username" placeholder="Username" ng-model="registerData.username" ng-minlength="registerData.minUsernameLength" ng-maxlength="registerData.maxUsernameLength" ng-required="true"/>
         </label>
-        <div ng-messages="registerForm.username.$error" role="alert">
+        <div ng-messages="registerForm.username.$error" ng-show="registerForm.username.$touched" role="alert">
 			    <div ng-messages-include="error-messages"></div>
+			    <div class="error-msg" ng-message="minlength, maxlength">Username length {{registerData.minUsernameLength}} to {{registerData.maxUsernameLength}} chars</div>
 		 	  </div>
 
 		 	  <!-- Email -->
-        <label class="item item-input" ng-class="{ 'has-errors': registerForm.email.$invalid, 'no-errors': registerForm.email.$valid }">
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.email.$touched && registerForm.email.$invalid}">
           <input type="email" name="email" placeholder="Email" ng-model="registerData.email" ng-required="true" />
         </label>
-        <div ng-messages="registerForm.email.$error" role="alert">
+        <div ng-messages="registerForm.email.$error" ng-show="registerForm.email.$touched" role="alert">
 			    <div ng-messages-include="error-messages"></div>
 		 	  </div>
 
 		 	  <!-- Password -->
-        <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$invalid, 'no-errors': registerForm.password.$valid }">
-          <input type="password" name="password" placeholder="Password" ng-minlength="6" ng-maxlength="14" ng-model="registerData.pwd" ng-required="true" />
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$touched registerForm.password.$invalid}">
+          <input type="password" name="password" placeholder="Password" ng-minlength="registerData.minPasswordLength" ng-maxlength="registerData.maxPasswordLength" ng-model="registerData.pwd" ng-required="true" />
         </label>
-        <div ng-messages="registerForm.password.$error" role="alert">
+        <div ng-messages="registerForm.password.$error" ng-show="registerForm.password.$touched" role="alert">
         	<div ng-messages-include="error-messages"></div>
-	  			<div ng-message="minlength, maxlength">Password length 6 to 14 chars</div>
+	  			<div class="error-msg" ng-message="minlength, maxlength">Password length {{registerData.minPasswordLength}} to {{registerData.maxPasswordLength}} chars</div>
 		 	  </div>
 
 		 	  <!-- Confirm Password -->
-        <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$modelValue !== registerForm.confPassword.$modelValue, 'no-errors': registerForm.password.$modelValue === registerForm.confPassword.$modelValue }">
+        <label class="item item-input" ng-class="{ 'has-errors': registerForm.confPassword.$touched && (registerForm.password.$invalid || registerForm.password.$modelValue !== registerForm.confPassword.$modelValue)}">
           <input type="password" name="confPassword" placeholder="Confirm Password" ng-model="registerData.confirmPassword" ng-pattern="{{registerForm.password.$viewValue}}" ng-required="true" />
         </label>
-        <div ng-messages="registerForm.confPassword.$error" role="alert">
+        <div ng-messages="registerForm.confPassword.$error" ng-show="registerForm.confPassword.$touched" role="alert">
         	<div ng-messages-include="error-messages"></div>
-        	<div ng-message="pattern">Your passwords do not match</div>
+        	<div class="error-msg" ng-message="pattern">Your passwords do not match</div>
 		 	  </div>
         
         <!-- Submit -->
@@ -49,6 +50,6 @@
         </label>
       </div>
     </form>
-    <a class="button button-clear button-positive icon-left ion-compose" ng-href="#/login">I already have an account</a>
+    <a class="button button-clear button-dark icon-left ion-compose" ng-href="#/login">I already have an account</a>
   </ion-content>
 </ion-view>

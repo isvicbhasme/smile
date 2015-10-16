@@ -83,8 +83,13 @@ appModule.controller('ArticlesCtrl', function($scope) {
   ];
 });
 
-appModule.controller('RegisterCtrl', function($scope, AuthService){
-  $scope.registerData = {};
+appModule.controller('RegisterCtrl', function($scope, AuthService, AuthServiceConstants){
+  $scope.registerData = {
+    minUsernameLength : AuthServiceConstants.minUsernameLength,
+    maxUsernameLength : AuthServiceConstants.maxUsernameLength,
+    minPasswordLength : AuthServiceConstants.minPasswordLength,
+    maxPasswordLength : AuthServiceConstants.maxPasswordLength
+  };
 
   // todo: confirm password check
   $scope.onRegister = function() {

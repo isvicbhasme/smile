@@ -1,10 +1,11 @@
 /* Empty. Add your own CSS if you like */
 
 .has-errors {
-    border-left: 3px solid #cc2511;
-    border-right: 3px solid #cc2511;
+    border-bottom: 2px solid #cc2511;
 }
-.no-errors {
-    border-left: 3px solid #3d8b3d;
-    border-right: 3px solid #3d8b3d;
+	
+.error-msg {
+    line-height: 1.7;
+    margin-bottom: 14px;
+    color: indianred;
 }

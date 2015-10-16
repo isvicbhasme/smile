@@ -95,3 +95,17 @@ servicesModule.factory('MenuListService', function() {
 
   return { getMenuList: getMenuList }
 });
+
+servicesModule.factory('AuthServiceConstants', function(){
+  var minUsernameLength = 3;
+  var maxUsernameLength = 10;
+  var minPasswordLength = 6;
+  var maxPasswordLength = 14;
+
+  return {
+    minUsernameLength : minUsernameLength,
+    maxUsernameLength : maxUsernameLength,
+    minPasswordLength : minPasswordLength,
+    maxPasswordLength : maxPasswordLength
+  }
+});
