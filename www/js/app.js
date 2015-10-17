@@ -65,22 +65,14 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
 
   .state('login', {
     url: '/login',
-    // views: {
-      // 'menuContent' : {
-        templateUrl: 'templates/login.html',
-        controller: 'AppCtrl'
-      // }
-    // }
+    templateUrl: 'templates/login.html',
+    controller: 'LoginCtrl'
   })
 
   .state('register', {
     url: '/register',
-    // views: {
-    //   'menuContent' : {
-        templateUrl: 'templates/register.html',
-        controller: 'RegisterCtrl'
-    //   }
-    // }
+    templateUrl: 'templates/register.html',
+    controller: 'RegisterCtrl'
   });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');

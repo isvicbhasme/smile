@@ -15,7 +15,7 @@
         </label>
         <div ng-messages="registerForm.username.$error" ng-show="registerForm.username.$touched" role="alert">
 			    <div ng-messages-include="error-messages"></div>
-			    <div class="error-msg" ng-message="minlength, maxlength">Username length {{registerData.minUsernameLength}} to {{registerData.maxUsernameLength}} chars</div>
+			    <div class="error-msg" ng-message="minlength, maxlength">Username should be {{registerData.minUsernameLength}} to {{registerData.maxUsernameLength}} chars wide</div>
 		 	  </div>
 
 		 	  <!-- Email -->
@@ -28,21 +28,25 @@
 
 		 	  <!-- Password -->
         <label class="item item-input" ng-class="{ 'has-errors': registerForm.password.$touched && registerForm.password.$invalid}">
-          <input type="password" name="password" placeholder="Password" ng-minlength="registerData.minPasswordLength" ng-maxlength="registerData.maxPasswordLength" ng-model="registerData.pwd" ng-required="true" />
+          <input type="password" name="password" placeholder="Password" ng-minlength="registerData.minPasswordLength" ng-maxlength="registerData.maxPasswordLength" ng-model="registerData.password" ng-required="true" />
         </label>
         <div ng-messages="registerForm.password.$error" ng-show="registerForm.password.$touched" role="alert">
         	<div ng-messages-include="error-messages"></div>
-	  			<div class="error-msg" ng-message="minlength, maxlength">Password length {{registerData.minPasswordLength}} to {{registerData.maxPasswordLength}} chars</div>
+	  			<div class="error-msg" ng-message="minlength, maxlength">Password should be {{registerData.minPasswordLength}} to {{registerData.maxPasswordLength}} chars wide</div>
 		 	  </div>
 
 		 	  <!-- Confirm Password -->
         <label class="item item-input" ng-class="{ 'has-errors': registerForm.confPassword.$touched && (registerForm.password.$invalid || registerForm.password.$modelValue !== registerForm.confPassword.$modelValue)}">
-          <input type="password" name="confPassword" placeholder="Confirm Password" ng-model="registerData.confirmPassword" ng-pattern="^{{registerForm.password.$viewValue}}$" ng-required="true" />
+          <input type="password" name="confPassword" placeholder="Confirm Password" ng-model="registerData.confirmPassword" ng-pattern="{{registerForm.password.$viewValue}}" ng-required="true" />
         </label>
         <div ng-messages="registerForm.confPassword.$error" ng-show="registerForm.confPassword.$touched" role="alert">
         	<div ng-messages-include="error-messages"></div>
         	<div class="error-msg" ng-message="pattern">Your passwords do not match</div>
 		 	  </div>
+
+		 	  <label class="item item-input">
+		 	  <input type="date">
+		 	  </label>
         
         <!-- Submit -->
         <label class="item">
@@ -50,6 +54,6 @@
         </label>
       </div>
     </form>
-    <a class="button button-clear button-dark icon-left ion-compose" ng-href="#/login">I already have an account</a>
+    <a class="button button-clear button-dark icon-left ion-android-walk" ng-href="#/login">I already have an account</a>
   </ion-content>
 </ion-view>

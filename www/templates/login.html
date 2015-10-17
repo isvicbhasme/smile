@@ -3,20 +3,37 @@
     <h1 class="title">Login</h1>
   </ion-header-bar>
   <ion-content>
+    <script type="text/ng-template" id="error-messages">
+      <div class="error-msg" ng-message="required">This field is required</div>
+    </script>
     <form name="loginForm" ng-submit="doLogin()" novalidate>
-      <div class="error" style="display:none"></div>
-      <div class="list list-inset">
-        <label class="item item-input" ng-class="{ 'has-errors' : loginForm.username.$invalid, 'no-errors' : loginForm.username.$valid}">
-          <input type="text" name="username" placeholder="Username" ng-model="loginData.username" required>
+      <div class="list">
+        <!-- Username -->
+        <label class="item item-input" ng-class="{ 'has-errors' : loginForm.username.$touched && loginForm.username.$invalid }">
+          <input type="text" name="username" placeholder="Username" ng-model="loginData.username" ng-minlength="loginData.minUsernameLength" ng-maxlength="loginData.maxUsernameLength" ng-required="true" />
         </label>
-        <label class="item item-input" ng-class="{ 'has-errors' : loginForm.password.$invalid, 'no-errors' : loginForm.password.$valid}">
-          <input type="password" name="password" placeholder="Password" ng-model="loginData.password" required minlength="6" maxlength="20">
+        <div ng-messages="loginForm.username.$error" ng-show="loginForm.username.$touched" role="alert">
+          <div ng-messages-include="error-messages"></div>
+          <div class="error-msg" ng-message="minlength, maxlength">Username should be {{loginData.minUsernameLength}} to {{loginData.maxUsernameLength}} chars wide</div>
+        </div>
+
+        <!-- Password -->
+        <label class="item item-input" ng-class="{ 'has-errors' : loginForm.password.$touched && loginForm.password.$invalid }">
+          <input type="password" name="password" placeholder="Password" ng-model="loginData.password" ng-minlength="loginData.minPasswordLength" ng-maxlength="loginData.maxPasswordLength" ng-required="true" />
         </label>
-        <button class="button button-block button-balanced" ng-disabled="loginForm.$invalid" type="submit">Log in</button>
+        <div ng-messages="loginForm.password.$error" ng-show="loginForm.password.$touched" role="alert">
+          <div ng-messages-include="error-messages"></div>
+          <div class="error-msg" ng-message="minlength, maxlength">Password should be {{loginData.minPasswordLength}} to {{loginData.maxPasswordLength}} chars wide</div>
+        </div>
+
+        <!-- Submit -->
+        <label class="item">
+          <button class="button button-block button-full button-balanced" ng-disabled="loginForm.$invalid" type="submit">Log in</button>
+        </label>
       </div>
     </form>
-    <a class="button button-clear button-positive icon-left ion-compose" ng-href="#/register">Register</a>
+    <a class="button button-clear button-dark icon-left ion-person-add" ng-href="#/register">Register</a>
     </br>
-    <button class="button button-clear button-positive icon-left ion-compose">Forgot password</button>
+    <button class="button button-clear button-dark icon-left ion-sad">Forgot password</button>
   </ion-content>
 </ion-view>
