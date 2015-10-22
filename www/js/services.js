@@ -3,12 +3,17 @@ var servicesModule = angular.module("app.services", []);
 servicesModule.factory('AuthService', function(){
   var isAuthenticated = false;
   var username = '';
-  var role = 'GUEST';
+  var role = '';
 
-  var setUserInfo = function(user) {
+  var setUserInfo = function(user, rolePar) {
     isAuthenticated = user.authenticated();
-    console.log("isAuthenticated:"+isAuthenticated);
-    username = user.getUsername();
+    if(isAuthenticated)
+    {
+      console.log("isAuthenticated:"+isAuthenticated);
+      username = user.getUsername();
+      role = rolePar;
+      console.log("role:"+role);
+    }
   }
 
   var clearUser = function() {

@@ -80,6 +80,27 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
     return result;
   }
 
+  var getRoleFromDb = function(user, callback) {
+    var role = '';
+    var userObject = Parse.Object.extend("User");
+    var query = new Parse.Query(userObject);
+    query.include("roleId");
+    query.equalTo("objectId", user.id);
+    query.find({
+      error : function(){
+        console.log("Error!");
+      }
+    }).then(function(results) {
+      var roleIdObject = results[0].get("roleId");
+      if(role = roleIdObject.get("name"))
+        callback(user, role);
+    });
+  }
+
+  var updateAuth = function(user, role) {
+    AuthService.setUserInfo(user, role);
+  }
+
   $scope.doLogin = function() {
     var validationResult = isFormValid();
     if(!validationResult.valid)
@@ -91,7 +112,7 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
     .then(function(user) {
       HistoryService.clearAllAndDontStoreThisPage();
       console.log(user);
-      AuthService.setUserInfo(user);
+      getRoleFromDb(user, updateAuth);
       $state.go('app.articles');
     },function(error) {
       alert("Error: " + error.code + " " + error.message);
@@ -101,7 +122,7 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
 });
 
 appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthServiceConstants){
-  $scope.loginData = {
+  $scope.registerData = {
     minUsernameLength : AuthServiceConstants.minUsernameLength,
     maxUsernameLength : AuthServiceConstants.maxUsernameLength,
     minPasswordLength : AuthServiceConstants.minPasswordLength,
@@ -110,30 +131,31 @@ appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthS
 
   function isFormValid() {
     var result = { valid: false, message: ""};
-    if(!$scope.loginData.username ||
-        $scope.loginData.username.length < AuthServiceConstants.minUsernameLength ||
-        $scope.loginData.username.length > AuthServiceConstants.maxUsernameLength)
+    if(!$scope.registerData.username ||
+        $scope.registerData.username.length < AuthServiceConstants.minUsernameLength ||
+        $scope.registerData.username.length > AuthServiceConstants.maxUsernameLength)
     {
+      console.log("Please check your username - "+ $scope.registerData.username);
       result.message = "Please check your username";
       return result;
     }
 
-    if(!$scope.loginData.email || $scope.loginData.email.test)
+    if(!$scope.registerData.email || $scope.registerData.email.test)
     {
       result.message = "Please enter a valid email"
       return result;
     }
 
-    if(!$scope.loginData.password ||
-        $scope.loginData.password.length < AuthServiceConstants.minPasswordLength ||
-        $scope.loginData.password.length > AuthServiceConstants.maxPasswordLength)
+    if(!$scope.registerData.password ||
+        $scope.registerData.password.length < AuthServiceConstants.minPasswordLength ||
+        $scope.registerData.password.length > AuthServiceConstants.maxPasswordLength)
     {
       result.message = "Please check your password";
       return result;
     }
 
-    if(!$scope.loginData.confirmPassword ||
-        $scope.loginData.password != $scope.loginData.confirmPassword)
+    if(!$scope.registerData.confirmPassword ||
+        $scope.registerData.password != $scope.registerData.confirmPassword)
     {
       result.message = "Your passwords do not match";
       return result;
@@ -149,20 +171,26 @@ appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthS
       alert("Oops! "+validationResult.message);
       return;
     }
-    var user = new Parse.User();
-    user.set("username", $scope.loginData.username);
-    user.set("email", $scope.loginData.email);
-    user.set("password", $scope.loginData.password);
-    user.signUp(null, {
-      success: function(user) {
-        alert("Registration successful! You may login now.")
-        $state.go('login');
-      },
-      error: function(user, error) {
-        alert("Oops! " + error.code + " " + error.message);
-        return;
-      }
-    })
+    var rolesObject = Parse.Object.extend("Roles");
+    var query = new Parse.Query(rolesObject);
+    query.equalTo("name", "greeter");
+    query.find().then(function(results) {
+      var user = new Parse.User();
+      user.set("username", $scope.registerData.username);
+      user.set("email", $scope.registerData.email);
+      user.set("password", $scope.registerData.password);
+      user.set("roleId", results[0]);
+      user.signUp(null, {
+        success: function(user) {
+          alert("Registration successful! You may login now.")
+          $state.go('login');
+        },
+        error: function(user, error) {
+          alert("Oops! " + error.code + " " + error.message);
+          return;
+        }
+      });
+    });
   }
 });
 
