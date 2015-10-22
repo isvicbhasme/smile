@@ -80,7 +80,7 @@ servicesModule.factory('MenuListService', function() {
         {
           name: 'Leaves',
           isLink: true,
-          link: '#/app/leaves'
+          link: '#/app/leaves/apply'
         },
         {
           name: 'Articles',

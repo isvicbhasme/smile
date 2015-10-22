@@ -24,9 +24,10 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
   });
 })
 
-.config(function($stateProvider, $urlRouterProvider) {
-  $stateProvider
+.config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
+  
 
+  $stateProvider
   .state('app', {
     url: '/app',
     abstract: true,
@@ -36,9 +37,29 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
 
   .state('app.leaves', {
     url: '/leaves',
+    abstract: true,
     views: {
       'menuContent': {
-        templateUrl: 'templates/leaves.html'
+        templateUrl: 'templates/leaves.html',
+        controller: 'LeavesCtrl'
+      }
+    }
+  })
+
+  .state('app.leaves.apply', {
+    url: '/apply',
+    views: {
+      'applyLeaveTab': {
+        templateUrl: 'templates/applyleave.html'
+      }
+    }
+  })
+
+  .state('app.leaves.view', {
+    url: '/view',
+    views: {
+      'viewLeavesTab': {
+        templateUrl: 'templates/viewleaves.html'
       }
     }
   })
@@ -76,4 +97,5 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
   });
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
+  // $ionicConfigProvider.tabs.position('bottom');
 });

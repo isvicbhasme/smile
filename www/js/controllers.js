@@ -39,6 +39,10 @@ appModule.controller('ArticlesCtrl', function($scope) {
   ];
 });
 
+appModule.controller('LeavesCtrl', function($scope) {
+  
+});
+
 appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServiceConstants, MenuListService, HistoryService){
   $scope.loginData = {
     username: '',
