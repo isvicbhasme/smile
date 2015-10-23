@@ -42,11 +42,12 @@ servicesModule.factory('AuthService', function(){
   var getUserRole = function() {
     return new Promise(function(resolve, reject) {
       console.log("Promise");
-      if(role == "" && Parse.User.current) {
+      verifyAuthentication();
+      if(role == "" && isAuthenticated) {
         var userObject = Parse.Object.extend("User");
         var query = new Parse.Query(userObject);
         query.include("roleId");
-        query.equalTo("objectId", Parse.User.current.id);
+        query.equalTo("objectId", Parse.User.current().id);
         query.find({
           error : function(){
             reject("Oops! I could not find your role. Are you an alien?");

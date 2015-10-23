@@ -42,28 +42,18 @@ appModule.controller('LeaveCtrl', function($scope, AuthService) {
   $scope.isLeader = false;
   AuthService.getUserRole().then(function(role) {
     $scope.isLeader = ("leader" == role);
+  }, function(msg) {
+    console.log(msg);
   });
 });
 
 appModule.controller('LeaveApplyCtrl', function($scope, AuthService) {
-  $scope.isLeader = false;
-  AuthService.getUserRole().then(function(role) {
-    $scope.isLeader = ("leader" == role);
-  });
 });
 
 appModule.controller('LeavesViewCtrl', function($scope, AuthService) {
-  $scope.isLeader = false;
-  AuthService.getUserRole().then(function(role) {
-    $scope.isLeader = ("leader" == role);
-  });
 });
 
 appModule.controller('LeavesApproveCtrl', function($scope, AuthService) {
-  $scope.isLeader = false;
-  AuthService.getUserRole().then(function(role) {
-    $scope.isLeader = ("leader" == role);
-  });
 });
 
 appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServiceConstants, MenuListService, HistoryService){
