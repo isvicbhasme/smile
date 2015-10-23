@@ -39,12 +39,43 @@ servicesModule.factory('AuthService', function(){
     }
   }
 
+  var getUserRole = function() {
+    return new Promise(function(resolve, reject) {
+      console.log("Promise");
+      if(role == "" && Parse.User.current) {
+        var userObject = Parse.Object.extend("User");
+        var query = new Parse.Query(userObject);
+        query.include("roleId");
+        query.equalTo("objectId", Parse.User.current.id);
+        query.find({
+          error : function(){
+            reject("Oops! I could not find your role. Are you an alien?");
+          }
+        }).then(function(results) {
+          if(results[0] != null && (role = results[0].get("roleId").get("name")) != "") // Assuming that all users have a role entry
+            resolve(role.trim().toLowerCase());
+          else
+            reject("Oops! Someone slipped & fell");
+        });
+      }
+      else if(role != "")
+      {
+        resolve(role.trim().toLowerCase());
+      }
+      else
+      {
+        reject("Oops! You should not be here"); // Tried to retrieve role of an unknown user!
+      }
+    });
+  }
+
   return { 
     setUserInfo: setUserInfo,
     clearUser: clearUser,
     getIsAuthenticated: getIsAuthenticated,
-    verifyAuthentication: verifyAuthentication
-    };
+    verifyAuthentication: verifyAuthentication,
+    getUserRole: getUserRole
+  };
 });
 
 servicesModule.factory('HistoryService', function($ionicHistory){

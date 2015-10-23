@@ -41,7 +41,7 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
     views: {
       'menuContent': {
         templateUrl: 'templates/leaves.html',
-        controller: 'LeavesCtrl'
+        controller: 'LeaveCtrl'
       }
     }
   })
@@ -50,7 +50,8 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
     url: '/apply',
     views: {
       'applyLeaveTab': {
-        templateUrl: 'templates/applyleave.html'
+        templateUrl: 'templates/applyleave.html',
+        controller: 'LeaveApplyCtrl'
       }
     }
   })
@@ -59,7 +60,18 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
     url: '/view',
     views: {
       'viewLeavesTab': {
-        templateUrl: 'templates/viewleaves.html'
+        templateUrl: 'templates/viewleaves.html',
+        controller: 'LeavesViewCtrl'
+      }
+    }
+  })
+
+  .state('app.leaves.approve', {
+    url: '/approve',
+    views: {
+      'approveLeavesTab': {
+        templateUrl: 'templates/approveleaves.html',
+        controller: 'LeavesApproveCtrl'
       }
     }
   })
@@ -95,6 +107,7 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
     templateUrl: 'templates/register.html',
     controller: 'RegisterCtrl'
   });
+
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
   // $ionicConfigProvider.tabs.position('bottom');

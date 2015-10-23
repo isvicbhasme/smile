@@ -25,7 +25,6 @@ appModule.controller('AppCtrl', function($scope, $state, AuthService, AuthServic
         alert("Error: " + error.code + " " + error.message);
     });
   }
-
 });
 
 appModule.controller('ArticlesCtrl', function($scope) {
@@ -39,8 +38,32 @@ appModule.controller('ArticlesCtrl', function($scope) {
   ];
 });
 
-appModule.controller('LeavesCtrl', function($scope) {
-  
+appModule.controller('LeaveCtrl', function($scope, AuthService) {
+  $scope.isLeader = false;
+  AuthService.getUserRole().then(function(role) {
+    $scope.isLeader = ("leader" == role);
+  });
+});
+
+appModule.controller('LeaveApplyCtrl', function($scope, AuthService) {
+  $scope.isLeader = false;
+  AuthService.getUserRole().then(function(role) {
+    $scope.isLeader = ("leader" == role);
+  });
+});
+
+appModule.controller('LeavesViewCtrl', function($scope, AuthService) {
+  $scope.isLeader = false;
+  AuthService.getUserRole().then(function(role) {
+    $scope.isLeader = ("leader" == role);
+  });
+});
+
+appModule.controller('LeavesApproveCtrl', function($scope, AuthService) {
+  $scope.isLeader = false;
+  AuthService.getUserRole().then(function(role) {
+    $scope.isLeader = ("leader" == role);
+  });
 });
 
 appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServiceConstants, MenuListService, HistoryService){
