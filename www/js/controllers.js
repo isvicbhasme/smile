@@ -22,7 +22,10 @@ appModule.controller('AppCtrl', function($scope, $state, AuthService, AuthServic
       AuthService.clearUser();
       $state.go('login');
     }, function(error) {
-        alert("Error: " + error.code + " " + error.message);
+        $ionicPopup.alert({
+          title: "User State",
+          message: "Error: " + error.message
+        });
     });
   }
 });
@@ -47,7 +50,7 @@ appModule.controller('LeaveCtrl', function($scope, AuthService) {
   });
 });
 
-appModule.controller('LeaveApplyCtrl', function($scope, AuthService) {
+appModule.controller('LeaveApplyCtrl', function($scope, AuthService, $ionicPopup) {
   var currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
   $scope.data = {
@@ -96,7 +99,10 @@ appModule.controller('LeaveApplyCtrl', function($scope, AuthService) {
     var validationResult = isFormValid();
     if(!validationResult.valid)
     {
-      alert(validationResult.message);
+      $ionicPopup.alert({
+        title: 'Form Validation Error',
+        template: validationResult.message
+      });
       return;
     }
     var LeavesTable = Parse.Object.extend("Leave");
@@ -108,10 +114,16 @@ appModule.controller('LeaveApplyCtrl', function($scope, AuthService) {
     leaves.set("userId", Parse.User.current());
     leaves.save(null, {
       success: function(leave) {
-        alert("Leave application submitted!")
+        $ionicPopup.alert({
+          title: "Leave Application",
+          template: "Leave application submitted!"
+        });
       },
       error: function(leave, error) {
-        alert("Error when trying to submit application: "+error.message);
+        $ionicPopup.alert({
+          title: "Leave Application",
+          template: "Error when trying to submit application: "+error.message
+        });
       }
     });
   }
@@ -185,7 +197,10 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
     var validationResult = isFormValid();
     if(!validationResult.valid)
     {
-      alert("Oops! "+validationResult.message);
+      $ioinicPopup.alert({
+        title: "Form Validation",
+        message: "Oops! "+validationResult.message
+      });
       return;
     }
     Parse.User.logIn($scope.loginData.username, $scope.loginData.password)
@@ -195,7 +210,10 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
       getRoleFromDb(user, updateAuth);
       $state.go('app.articles');
     },function(error) {
-      alert("Error: " + error.code + " " + error.message);
+      $ionicPopup.alert({
+        title: "User State",
+        message: "Error: " + error.code + " " + error.message
+      });
       return;
     });
   }
@@ -248,7 +266,10 @@ appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthS
     var validationResult = isFormValid();
     if(!validationResult.valid)
     {
-      alert("Oops! "+validationResult.message);
+      $ionicPopup.alert({
+        title: "Form Validation",
+        message: "Oops! "+validationResult.message
+      });
       return;
     }
     var rolesObject = Parse.Object.extend("Roles");
@@ -262,11 +283,17 @@ appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthS
       user.set("roleId", results[0]);
       user.signUp(null, {
         success: function(user) {
-          alert("Registration successful! You may login now.")
+          $ionicPopup.alert({
+            title: "User Registration",
+            message: "Registration successful! You may login now."
+          });
           $state.go('login');
         },
         error: function(user, error) {
-          alert("Oops! " + error.code + " " + error.message);
+          $ionicPopup.alert({
+            title: "User Registration",
+            message: "Oops! " + error.message
+          });
           return;
         }
       });

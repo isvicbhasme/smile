@@ -110,5 +110,5 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages', 'ionic-datepick
 
   // if none of the above states are matched, use this as the fallback
   $urlRouterProvider.otherwise('/login');
-  // $ionicConfigProvider.tabs.position('bottom');
+  $ionicConfigProvider.tabs.position('bottom');
 });
