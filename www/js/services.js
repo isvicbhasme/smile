@@ -36,6 +36,7 @@ servicesModule.factory('AuthService', function(){
     {
       isAuthenticated = false;
       username = '';
+      role = '';
     }
   }
 
@@ -65,7 +66,7 @@ servicesModule.factory('AuthService', function(){
       }
       else
       {
-        reject("Oops! You should not be here"); // Tried to retrieve role of an unknown user!
+        reject("Oops! You should not be here");
       }
     });
   }

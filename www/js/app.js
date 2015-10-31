@@ -5,9 +5,10 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 
-angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
+angular.module('app', ['ionic', 'app.controllers', 'ngMessages', 'ionic-datepicker'])
 
 .run(function($ionicPlatform) {
+  Parse.initialize("RAxSwXAaCAnU0gDMerYZyzlVUYG1XJPTjnf1SxkT", "i3LCpXVDwWIgUlqcEBdrncGQeBKuT9HG9lWuDrK4");
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -20,7 +21,6 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages'])
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
-  Parse.initialize("RAxSwXAaCAnU0gDMerYZyzlVUYG1XJPTjnf1SxkT", "i3LCpXVDwWIgUlqcEBdrncGQeBKuT9HG9lWuDrK4");
   });
 })
 

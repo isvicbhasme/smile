@@ -1,5 +1,37 @@
 <ion-view view-title="Apply Leave">
   <ion-content>
-    You can apply leaves here
+  	<script type="text/ng-template" id="error-messages">
+      <div class="error-msg" ng-message="required">This field is required</div>
+    </script>
+  	<div class="list">
+	    <form name="leaveForm" novalidate>
+	    	<!-- From date -->
+		    <label class="item ">
+		    	<ionic-datepicker date="data.from" min="minDate" max="maxDate" callback="fromDateCallback">
+				    From date: <button class="button button-block button-positive"> {{ data.from | date:'MMMM/dd/yyyy' }} </button>
+				</ionic-datepicker>
+		    </label>
+
+		    <!-- To date -->
+		    <label class="item ">
+		    	<ionic-datepicker date="data.to" min="minDate" max="maxDate" callback="toDateCallback">
+				    To date: <button class="button button-block button-positive"> {{ data.to | date:'MMMM/dd/yyyy' }} </button>
+				</ionic-datepicker>
+		    </label>
+
+		    <!-- Description -->
+	    	<label class="item item-input" ng-class="{ 'has-errors' : leaveForm.desc.$touched && leaveForm.desc.$invalid }">
+				<input type="text" name="desc" ng-model="data.reason" placeholder="Sad, but why can't you make it?" ng-required="true" />
+	    	</label>
+	    	<div ng-messages="leaveForm.desc.$error" ng-show="leaveForm.desc.$touched" role="alert">
+	          <div ng-messages-include="error-messages"></div>
+	        </div>
+
+	        <!-- Submit -->
+	        <label class="item">
+	          <button class="button button-block button-full button-balanced" ng-disabled="leaveForm.$invalid" type="button" ng-click="applyLeave()">Apply</button>
+	        </label>
+        </form>
+    </div>
   </ion-content>
 </ion-view>

@@ -48,6 +48,72 @@ appModule.controller('LeaveCtrl', function($scope, AuthService) {
 });
 
 appModule.controller('LeaveApplyCtrl', function($scope, AuthService) {
+  var currentDate = new Date();
+  $scope.data = {
+    from: currentDate,
+    to: currentDate,
+    minDate: new Date(2000, 1, 1),
+    maxDate: new Date(2100, 12, 31)
+  };
+   
+  $scope.fromDateCallback = function (val) {
+      if (!val) { 
+        console.log('Date not selected');
+      } else {
+        console.log('Selected from date is : ', val);
+        $scope.data.from = val;
+      }
+  }
+  $scope.toDateCallback = function (val) {
+      if (!val) { 
+        console.log('Date not selected');
+      } else {
+        console.log('Selected to date is : ', val);
+        $scope.data.to = val;
+      }
+  }
+
+  var isFormValid = function() {
+    var result = { valid: false, message: ""};
+    if(!$scope.data.reason || $scope.data.reason.length < 1) {
+      result.message = "Oops, please provide a reason for your leave";
+      return result;
+    }
+    if($scope.data.from.getTime() < currentDate || $scope.data.to.getTime() < currentDate) {
+      result.message = "Oops!, sorry you cannot apply leave for a past date";
+      return result;
+    }
+    if($scope.data.from.getTime() > $scope.data.to.getTime()) {
+      result.message = "Oh please!, your 'from' date should occur before your 'to' date"
+      return result;
+    }
+    result.valid = true;
+    return result;
+  }
+
+  $scope.applyLeave = function() {
+    var validationResult = isFormValid();
+    if(!validationResult.valid)
+    {
+      alert(validationResult.message);
+      return;
+    }
+    var LeavesTable = Parse.Object.extend("Leave");
+    var leaves = new LeavesTable();
+    leaves.set("leaveFrom", $scope.data.from);
+    leaves.set("leaveTo", $scope.data.to);
+    leaves.set("isApproved", false);
+    leaves.set("reason", $scope.data.reason);
+    leaves.set("userId", Parse.User.current());
+    leaves.save(null, {
+      success: function(leave) {
+        alert("Leave application submitted!")
+      },
+      error: function(leave, error) {
+        alert("Error when trying to submit application: "+error.message);
+      }
+    });
+  }
 });
 
 appModule.controller('LeavesViewCtrl', function($scope, AuthService) {
