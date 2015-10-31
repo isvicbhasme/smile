@@ -49,6 +49,7 @@ appModule.controller('LeaveCtrl', function($scope, AuthService) {
 
 appModule.controller('LeaveApplyCtrl', function($scope, AuthService) {
   var currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
   $scope.data = {
     from: currentDate,
     to: currentDate,
@@ -76,11 +77,11 @@ appModule.controller('LeaveApplyCtrl', function($scope, AuthService) {
   var isFormValid = function() {
     var result = { valid: false, message: ""};
     if(!$scope.data.reason || $scope.data.reason.length < 1) {
-      result.message = "Oops, please provide a reason for your leave";
+      result.message = "Oops! Please provide a reason for your leave";
       return result;
     }
     if($scope.data.from.getTime() < currentDate || $scope.data.to.getTime() < currentDate) {
-      result.message = "Oops!, sorry you cannot apply leave for a past date";
+      result.message = "Oops! Sorry you cannot apply leave for a past date";
       return result;
     }
     if($scope.data.from.getTime() > $scope.data.to.getTime()) {
