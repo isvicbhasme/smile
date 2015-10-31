@@ -3,10 +3,10 @@ var appModule = angular.module('app.controllers', ['app.services']);
 
 appModule.controller('AppCtrl', function($scope, $state, AuthService, AuthServiceConstants, MenuListService, HistoryService) {
 
-  AuthService.verifyAuthentication();
-  var isLoggedIn = AuthService.getIsAuthenticated();
+  var isLoggedIn = AuthService.isAuthenticated();
   if(!isLoggedIn) {
     HistoryService.clearAllAndDontStoreThisPage();
+    console.log("redirect to login");
     $state.go('login');
     return;
   }
@@ -19,7 +19,7 @@ appModule.controller('AppCtrl', function($scope, $state, AuthService, AuthServic
     Parse.User.logOut().then(
       function(){
       HistoryService.clearAllAndDontStoreThisPage();
-      AuthService.clearUser();
+      AuthService.clearUserRole();
       $state.go('login');
     }, function(error) {
         $ionicPopup.alert({
@@ -30,7 +30,11 @@ appModule.controller('AppCtrl', function($scope, $state, AuthService, AuthServic
   }
 });
 
-appModule.controller('ArticlesCtrl', function($scope) {
+appModule.controller('ArticlesCtrl', function($scope, $state, AuthService) {
+  if(!AuthService.isAuthenticated()) {
+    $state.go('login');
+    return;
+  }
   $scope.articles = [
     { title: 'Report - 1st Jan 2015', id: 1, type: 'Announcement' },
     { title: 'Report - 2nd Jan 2015', id: 2, type: 'Article' },
@@ -50,7 +54,11 @@ appModule.controller('LeaveCtrl', function($scope, AuthService) {
   });
 });
 
-appModule.controller('LeaveApplyCtrl', function($scope, AuthService, $ionicPopup) {
+appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $ionicPopup) {
+  if(!AuthService.isAuthenticated()) {
+    $state.go('login');
+    return;
+  }
   var currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
   $scope.data = {
@@ -129,10 +137,18 @@ appModule.controller('LeaveApplyCtrl', function($scope, AuthService, $ionicPopup
   }
 });
 
-appModule.controller('LeavesViewCtrl', function($scope, AuthService) {
+appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService) {
+  if(!AuthService.isAuthenticated()) {
+    $state.go('login');
+    return;
+  }
 });
 
 appModule.controller('LeavesApproveCtrl', function($scope, AuthService) {
+  if(!AuthService.isAuthenticated()) {
+    $state.go('login');
+    return;
+  }
 });
 
 appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServiceConstants, MenuListService, HistoryService){
@@ -144,8 +160,7 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
     maxPasswordLength : AuthServiceConstants.maxPasswordLength
   };
 
-  AuthService.verifyAuthentication();
-  var isLoggedIn = AuthService.getIsAuthenticated();
+  var isLoggedIn = AuthService.isAuthenticated();
   if(isLoggedIn) {
     HistoryService.clearAllAndDontStoreThisPage();
     $state.go('app.articles');
@@ -185,12 +200,8 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
     }).then(function(results) {
       var roleIdObject = results[0].get("roleId");
       if(role = roleIdObject.get("name"))
-        callback(user, role);
+        callback(role);
     });
-  }
-
-  var updateAuth = function(user, role) {
-    AuthService.setUserInfo(user, role);
   }
 
   $scope.doLogin = function() {
@@ -207,7 +218,7 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
     .then(function(user) {
       HistoryService.clearAllAndDontStoreThisPage();
       console.log(user);
-      getRoleFromDb(user, updateAuth);
+      getRoleFromDb(user, AuthService.setUserRole);
       $state.go('app.articles');
     },function(error) {
       $ionicPopup.alert({
@@ -220,6 +231,10 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
 });
 
 appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthServiceConstants){
+  if(!AuthService.isAuthenticated()) {
+    $state.go('login');
+    return;
+  }
   $scope.registerData = {
     minUsernameLength : AuthServiceConstants.minUsernameLength,
     maxUsernameLength : AuthServiceConstants.maxUsernameLength,
@@ -301,7 +316,11 @@ appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthS
   }
 });
 
-appModule.controller('ArticleCtrl', function($scope, $stateParams) {
+appModule.controller('ArticleCtrl', function($scope, $stateParams, $state, AuthService) {
+  if(!AuthService.isAuthenticated()) {
+    $state.go('login');
+    return;
+  }
   $scope.id = $stateParams.articleId;
   $scope.type = $stateParams.type;
 });

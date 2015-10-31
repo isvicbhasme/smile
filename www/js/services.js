@@ -1,50 +1,34 @@
 var servicesModule = angular.module("app.services", []);
 
 servicesModule.factory('AuthService', function(){
-  var isAuthenticated = false;
-  var username = '';
   var role = '';
 
-  var setUserInfo = function(user, rolePar) {
-    isAuthenticated = user.authenticated();
-    if(isAuthenticated)
-    {
-      console.log("isAuthenticated:"+isAuthenticated);
-      username = user.getUsername();
-      role = rolePar;
-      console.log("role:"+role);
-    }
+  var isAuthenticated = function() {
+    return Parse.User.current() && Parse.User.current().authenticated();
   }
 
-  var clearUser = function() {
-    isAuthenticated = false;
-    username = '';
-  }
-
-  var getIsAuthenticated = function() {
-    console.log("AuthService.isAuthenticated:"+isAuthenticated);
-    return isAuthenticated;
-  }
-
-  var verifyAuthentication = function() {
+  var getUsername = function() {
     var user = Parse.User.current();
-    if(user) {
-      isAuthenticated = user.authenticated();
-      username = user.getUsername();
-    }
-    else
-    {
-      isAuthenticated = false;
-      username = '';
-      role = '';
-    }
+    if(user)
+      return user.getUsername();
+    return null;
+  }
+
+  var clearUserRole = function() {
+    role = '';
+  }
+
+  var setUserRole = function(roleP) {
+    role = roleP;
   }
 
   var getUserRole = function() {
     return new Promise(function(resolve, reject) {
-      console.log("Promise");
-      verifyAuthentication();
-      if(role == "" && isAuthenticated) {
+      if(!Parse.User.current() || !Parse.User.current().authenticated) {
+        clearUserRole();
+        resolve(role);
+      }
+      else if(role == "") {
         var userObject = Parse.Object.extend("User");
         var query = new Parse.Query(userObject);
         query.include("roleId");
@@ -60,23 +44,19 @@ servicesModule.factory('AuthService', function(){
             reject("Oops! Someone slipped & fell");
         });
       }
-      else if(role != "")
-      {
-        resolve(role.trim().toLowerCase());
-      }
       else
       {
-        reject("Oops! You should not be here");
+        resolve(role.trim().toLowerCase());
       }
     });
   }
 
   return { 
-    setUserInfo: setUserInfo,
-    clearUser: clearUser,
-    getIsAuthenticated: getIsAuthenticated,
-    verifyAuthentication: verifyAuthentication,
-    getUserRole: getUserRole
+    clearUserRole: clearUserRole,
+    isAuthenticated: isAuthenticated,
+    setUserRole: setUserRole,
+    getUserRole: getUserRole,
+    getUsername: getUsername
   };
 });
 
@@ -127,7 +107,6 @@ servicesModule.factory('MenuListService', function() {
         }
       ];
     }
-    console.log("Factory invoked");
     return items;
   }
 
