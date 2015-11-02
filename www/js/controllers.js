@@ -1,7 +1,7 @@
 'use strict';
 var appModule = angular.module('app.controllers', ['app.services']);
 
-appModule.controller('AppCtrl', function($scope, $state, AuthService, AuthServiceConstants, MenuListService, HistoryService) {
+appModule.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService) {
 
   var isLoggedIn = AuthService.isAuthenticated();
   if(!isLoggedIn) {
@@ -24,7 +24,7 @@ appModule.controller('AppCtrl', function($scope, $state, AuthService, AuthServic
     }, function(error) {
         $ionicPopup.alert({
           title: "User State",
-          message: "Error: " + error.message
+          template: "Error: " + error.message
         });
     });
   }
@@ -151,7 +151,7 @@ appModule.controller('LeavesApproveCtrl', function($scope, AuthService) {
   }
 });
 
-appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServiceConstants, MenuListService, HistoryService){
+appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService){
   $scope.loginData = {
     username: '',
     minUsernameLength : AuthServiceConstants.minUsernameLength,
@@ -210,7 +210,7 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
     {
       $ioinicPopup.alert({
         title: "Form Validation",
-        message: "Oops! "+validationResult.message
+        template: "Oops! "+validationResult.message
       });
       return;
     }
@@ -223,18 +223,14 @@ appModule.controller('LoginCtrl', function($scope, $state, AuthService, AuthServ
     },function(error) {
       $ionicPopup.alert({
         title: "User State",
-        message: "Error: " + error.code + " " + error.message
+        template: "Error: " + error.code + " " + error.message
       });
       return;
     });
   }
 });
 
-appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthServiceConstants){
-  if(!AuthService.isAuthenticated()) {
-    $state.go('login');
-    return;
-  }
+appModule.controller('RegisterCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants){
   $scope.registerData = {
     minUsernameLength : AuthServiceConstants.minUsernameLength,
     maxUsernameLength : AuthServiceConstants.maxUsernameLength,
@@ -283,7 +279,7 @@ appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthS
     {
       $ionicPopup.alert({
         title: "Form Validation",
-        message: "Oops! "+validationResult.message
+        template: "Oops! "+validationResult.message
       });
       return;
     }
@@ -300,16 +296,16 @@ appModule.controller('RegisterCtrl', function($scope, $state, AuthService, AuthS
         success: function(user) {
           $ionicPopup.alert({
             title: "User Registration",
-            message: "Registration successful! You may login now."
+            template: "Registration successful! You may login now."
           });
           $state.go('login');
         },
         error: function(user, error) {
           $ionicPopup.alert({
             title: "User Registration",
-            message: "Oops! " + error.message
+            template: "Oops! " + error.message
           });
-          return;
+          return false;
         }
       });
     });
