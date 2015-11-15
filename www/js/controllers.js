@@ -139,7 +139,7 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
   }
 });
 
-appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService) {
+appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, $ionicPopup) {
   if(!AuthService.isAuthenticated()) {
     $state.go('login');
     return;
@@ -151,8 +151,43 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService) {
             date1.getFullYear() == date2.getFullYear();
   }
 
+  var revokeLeave = function(leave) {
+    var leaveQuery = new Parse.Query(Parse.Object.extend("Leave"));
+    leaveQuery.equalTo("objectId", leave.identification);
+    leaveQuery.first().then(function(result) {
+      if(result)
+      {
+        var currentDate = new Date();
+        result.set("isRevoked", true);
+        result.set("revokedOn", currentDate);
+        result.save().then(function() {
+          for (var i = $scope.leaves.list.length - 1; i >= 0; i--) {
+            if($scope.leaves.list[i].identification == leave.identification) {
+              $scope.leaves.list[i].isRevoked = true;
+              $scope.leaves.list[i].revokedOn = currentDate;
+              $scope.$apply();
+              break;
+            }
+          };
+        });
+      }
+    });
+  }
+
+  var confirmLeaveRevoke = function(leave) {
+    $ionicPopup.confirm({
+      title: 'Revoke leave',
+      template: 'Are you sure you want to revoke this leave?'
+    }).then(function(response) {
+      if(response) {
+        revokeLeave(leave);
+      }
+    });
+  }
+
   $scope.leaves = {
-    list: []
+    list: [],
+    confirmRevoke: confirmLeaveRevoke
   };
 
   var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
@@ -162,6 +197,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService) {
     $scope.leaves.count = results.length;
     results.forEach(function(dbData, index) {
       var leave = {};
+      leave.identification = dbData.id;
       leave.createdOn = dbData.get("createdAt");
       leave.reason = dbData.get("reason");
       leave.from = dbData.get("leaveFrom");
@@ -180,7 +216,6 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService) {
         leave.inspectedOn = dbData.get("inspectedOn");
       }
       $scope.leaves.list.push(leave);
-      console.log("Number of result = "+index +" data: "+ JSON.stringify(leave));
     });
   });
 });
@@ -249,7 +284,7 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
     var validationResult = isFormValid();
     if(!validationResult.valid)
     {
-      $ioinicPopup.alert({
+      $ionicPopup.alert({
         title: "Form Validation",
         template: "Oops! "+validationResult.message
       });
