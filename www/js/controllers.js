@@ -118,6 +118,8 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
     leaves.set("leaveFrom", $scope.data.from);
     leaves.set("leaveTo", $scope.data.to);
     leaves.set("isApproved", false);
+    leaves.set("isRejected", false);
+    leaves.set("isRevoked", false);
     leaves.set("reason", $scope.data.reason);
     leaves.set("userId", Parse.User.current());
     leaves.save(null, {
@@ -142,6 +144,45 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService) {
     $state.go('login');
     return;
   }
+
+  var isSameDate = function(date1, date2) {
+    return  date1.getDate() == date2.getDate() &&
+            date1.getMonth() == date2.getMonth() &&
+            date1.getFullYear() == date2.getFullYear();
+  }
+
+  $scope.leaves = {
+    list: []
+  };
+
+  var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
+  leavesQuery.include("inspectedBy");
+  leavesQuery.equalTo("userId", Parse.User.current());
+  leavesQuery.find().then(function(results) {
+    $scope.leaves.count = results.length;
+    results.forEach(function(dbData, index) {
+      var leave = {};
+      leave.createdOn = dbData.get("createdAt");
+      leave.reason = dbData.get("reason");
+      leave.from = dbData.get("leaveFrom");
+      if(!isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
+        leave.to = dbData.get("leaveTo");
+      }
+      leave.isRejected = dbData.get("isRejected");
+      leave.isRevoked = dbData.get("isRevoked");
+      if(leave.isRevoked)
+      {
+        leave.revokedOn = dbData.get("revokedOn");
+      }
+      leave.isApproved = dbData.get("isApproved");
+      if(leave.isApproved || leave.isRejected) {
+        leave.inspectedBy = dbData.get("inspectedBy").get("username");
+        leave.inspectedOn = dbData.get("inspectedOn");
+      }
+      $scope.leaves.list.push(leave);
+      console.log("Number of result = "+index +" data: "+ JSON.stringify(leave));
+    });
+  });
 });
 
 appModule.controller('LeavesApproveCtrl', function($scope, AuthService) {

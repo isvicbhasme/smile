@@ -9,3 +9,19 @@
     margin-bottom: 14px;
     color: indianred;
 }
+
+.approved-color {
+	color: seagreen;
+}
+
+.rejected-color {
+	color: red;
+}
+
+.waiting-color {
+	color: darkorange;
+}
+
+.card-status-bar {
+	text-align: right;
+}
