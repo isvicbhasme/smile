@@ -217,6 +217,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, $io
       }
       $scope.leaves.list.push(leave);
     });
+  $scope.$apply();
   });
 });
 
