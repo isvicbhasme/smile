@@ -8,14 +8,14 @@
 	    	<!-- From date -->
 		    <label class="item ">
 		    	<ionic-datepicker date="data.from" min="minDate" max="maxDate" callback="fromDateCallback">
-				    From date: <button class="button button-block button-positive"> {{ data.from | date:'MMMM/dd/yyyy' }} </button>
+				    From date: <button class="button button-block button-balanced rounded-corner"> {{ data.from | date:'MMMM/dd/yyyy' }} </button>
 				</ionic-datepicker>
 		    </label>
 
 		    <!-- To date -->
 		    <label class="item ">
 		    	<ionic-datepicker date="data.to" min="minDate" max="maxDate" callback="toDateCallback">
-				    To date: <button class="button button-block button-positive"> {{ data.to | date:'MMMM/dd/yyyy' }} </button>
+				    To date: <button class="button button-block button-balanced rounded-corner"> {{ data.to | date:'MMMM/dd/yyyy' }} </button>
 				</ionic-datepicker>
 		    </label>
 
@@ -29,7 +29,7 @@
 
 	        <!-- Submit -->
 	        <label class="item">
-	          <button class="button button-block button-full button-balanced" ng-disabled="leaveForm.$invalid" type="button" ng-click="applyLeave()">Apply</button>
+	          <button class="button button-block button-full button-energized button-dark-text rounded-corner" ng-disabled="leaveForm.$invalid" type="button" ng-click="applyLeave()">Apply</button>
 	        </label>
         </form>
     </div>

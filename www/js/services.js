@@ -93,17 +93,20 @@ servicesModule.factory('MenuListService', function() {
         {
           name: 'Logout',
           isLink: false,
-          clickAction: 'logout()'
+          clickAction: 'logout()',
+          icon: 'ion-android-exit'
         },
         {
           name: 'Leaves',
           isLink: true,
-          link: '#/app/leaves/apply'
+          link: '#/app/leaves/apply',
+          icon: 'ion-plus-round'
         },
         {
           name: 'Articles',
           isLink: true,
-          link: '#/app/articles'
+          link: '#/app/articles',
+          icon: 'ion-information'
         }
       ];
     }

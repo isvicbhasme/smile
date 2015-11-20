@@ -25,3 +25,7 @@
 .card-status-bar {
 	text-align: right;
 }
+
+.rounded-corner {
+	border-radius: 5px;
+}

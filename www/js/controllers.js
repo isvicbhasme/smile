@@ -355,7 +355,7 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
       $state.go('app.articles');
     },function(error) {
       $ionicPopup.alert({
-        title: "User State",
+        title: "Login Failure",
         template: "Error: " + error.code + " " + error.message
       });
       return;

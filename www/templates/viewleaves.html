@@ -2,7 +2,7 @@
 <ion-content>
 <div class="list card" ng-repeat="leave in leaves.list">
 
-	<div class="item item-icon-left">
+	<div class="item item-icon-left item-divider">
 		<i ng-if="leave.isApproved && leave.isRevoked == false" class="icon ion-checkmark-round approved-color"> </i>
 		<i ng-if="leave.isRejected && leave.isRevoked == false" class="icon ion-close-round rejected-color"> </i>
 		<i ng-if="(leave.isRejected == false && leave.isApproved == false) || leave.isRevoked" class="icon ion-alert waiting-color"> </i>
@@ -10,7 +10,7 @@
 		<h2 ng-if="leave.to == null">{{leave.from | date:'mediumDate'}}</h2>
 		<p ng-if="leave.isApproved && !leave.isRevoked">Approved by {{leave.inspectedBy}}</p>
 		<p ng-if="leave.isRejected && !leave.isRevoked">Rejected by {{leave.inspectedBy}}</p>
-		<p ng-if="leave.isRevoked">You've revoked this</p>
+		<p ng-if="leave.isRevoked">Revoked on {{leave.revokedOn | date:'mediumDate'}}</p>
 		<p ng-if="leave.isRevoked == false && leave.isApproved == false && leave.isRejected == false">Waiting for inspection</p>
 	</div>
 
@@ -22,10 +22,10 @@
 			<p style="margin-top:0; margin-bottom:0" >Applied on {{leave.createdOn | date:'mediumDate'}}</p>
 			<p style="margin-top:0; margin-bottom:0"  ng-if="leave.isApproved">Approved on {{leave.inspectedOn | date:'mediumDate'}}</p>
 			<p style="margin-top:0; margin-bottom:0"  ng-if="leave.isRejected">Rejected on {{leave.inspectedOn | date:'mediumDate'}}</p>
-			<p style="margin-top:0; margin-bottom:0"  ng-if="leave.isRevoked">Revoked on {{leave.revokedOn | date:'mediumDate'}}</p>
 		</div>
 	</div>
-  	<button class="button button-calm button-full" style="margin-bottom:0px; margin-top:0px" ng-disabled="leave.isRevoked" ng-click="leaves.confirmRevoke(leave)">Revoke</button>
+  	<button class="button button-balanced button-full rounded-corner" style="margin-bottom:0px; margin-top:0px" ng-disabled="leave.isRevoked" ng-click="leaves.confirmRevoke(leave)">Revoke
+  	</button>
 
 </div>
 </ion-content>
