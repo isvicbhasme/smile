@@ -139,16 +139,10 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
   }
 });
 
-appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, $ionicPopup) {
+appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, BasicApiService, $ionicPopup) {
   if(!AuthService.isAuthenticated()) {
     $state.go('login');
     return;
-  }
-
-  var isSameDate = function(date1, date2) {
-    return  date1.getDate() == date2.getDate() &&
-            date1.getMonth() == date2.getMonth() &&
-            date1.getFullYear() == date2.getFullYear();
   }
 
   var revokeLeave = function(leave) {
@@ -201,7 +195,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, $io
       leave.createdOn = dbData.get("createdAt");
       leave.reason = dbData.get("reason");
       leave.from = dbData.get("leaveFrom");
-      if(!isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
+      if(!BasicApiService.isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
         leave.to = dbData.get("leaveTo");
       }
       leave.isRejected = dbData.get("isRejected");
@@ -221,11 +215,74 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, $io
   });
 });
 
-appModule.controller('LeavesApproveCtrl', function($scope, AuthService) {
+appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, AuthService, BasicApiService) {
   if(!AuthService.isAuthenticated()) {
     $state.go('login');
     return;
   }
+
+  var confirmAndApprove = function(){
+
+  }
+
+  var confirmAndReject = function(){
+    console.log("Hello");
+  }
+
+  $scope.leaves = {
+    list: [],
+    approve: confirmAndApprove,
+    reject: confirmAndReject,
+    test: confirmAndReject
+  };
+
+  var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
+  leavesQuery.include("inspectedBy");
+  leavesQuery.notEqualTo("userId", Parse.User.current());
+  leavesQuery.find().then(function(results) {
+    $scope.leaves.count = results.length;
+    results.forEach(function(dbData, index) {
+      var leave = {};
+      leave.identification = dbData.id;
+      leave.createdOn = dbData.get("createdAt");
+      leave.reason = dbData.get("reason");
+      leave.from = dbData.get("leaveFrom");
+      if(!BasicApiService.isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
+        leave.to = dbData.get("leaveTo");
+      }
+      leave.isRejected = dbData.get("isRejected");
+      leave.isRevoked = dbData.get("isRevoked");
+      if(leave.isRevoked)
+      {
+        leave.revokedOn = dbData.get("revokedOn");
+      }
+      leave.isApproved = dbData.get("isApproved");
+      if(leave.isApproved || leave.isRejected) {
+        leave.inspectedBy = dbData.get("inspectedBy").get("username");
+        leave.inspectedOn = dbData.get("inspectedOn");
+      }
+      $scope.leaves.list.push(leave);
+    });
+  $scope.$apply();
+  });
+
+  $ionicModal.fromTemplateUrl('templates/leaveApproveFilters.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+
+  $scope.openModal = function() {
+    $scope.modal.show()
+  }
+
+  $scope.closeModal = function() {
+    $scope.modal.hide();
+  };
+
+  $scope.$on('$destroy', function() {
+    $scope.modal.remove();
+  });
 });
 
 appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService){
@@ -294,7 +351,6 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
     Parse.User.logIn($scope.loginData.username, $scope.loginData.password)
     .then(function(user) {
       HistoryService.clearAllAndDontStoreThisPage();
-      console.log(user);
       getRoleFromDb(user, AuthService.setUserRole);
       $state.go('app.articles');
     },function(error) {

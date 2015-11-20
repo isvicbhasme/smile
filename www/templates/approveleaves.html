@@ -1,5 +1,36 @@
 <ion-view view-title="Approve Leaves">
   <ion-content>
-    You can approve leaves here
+    <div class="list card" ng-repeat="leave in leaves.list">
+
+		<div class="item item-icon-left item-divider">
+			<i ng-if="leave.isApproved && leave.isRevoked == false" class="icon ion-checkmark-round approved-color"> </i>
+			<i ng-if="leave.isRejected && leave.isRevoked == false" class="icon ion-close-round rejected-color"> </i>
+			<i ng-if="(leave.isRejected == false && leave.isApproved == false) || leave.isRevoked" class="icon ion-alert waiting-color"> </i>
+			<h2 ng-if="leave.to != null">{{leave.from | date:'mediumDate'}} to {{leave.to | date:'mediumDate'}}</h2>
+			<h2 ng-if="leave.to == null">{{leave.from | date:'mediumDate'}}</h2>
+			<p ng-if="leave.isApproved && !leave.isRevoked">Approved by {{leave.inspectedBy}}</p>
+			<p ng-if="leave.isRejected && !leave.isRevoked">Rejected by {{leave.inspectedBy}}</p>
+			<p ng-if="leave.isRevoked">Revoked on {{leave.revokedOn | date:'mediumDate'}}</p>
+			<p ng-if="leave.isRevoked == false && leave.isApproved == false && leave.isRejected == false">Waiting for inspection</p>
+		</div>
+
+		<div class="item item-body">
+			<p>
+				{{leave.reason}}
+			</p>
+
+			<div class="card-status-bar">
+				<p style="margin-top:0; margin-bottom:0" >Applied on {{leave.createdOn | date:'mediumDate'}}</p>
+			</div>
+		</div>
+		<div class="button-bar">
+		  	<button class="button button-clear button-balanced" style="" ng-if="!leave.isApproved && !leave.isRevoked" ng-click="">Approve</button>
+		  	<button class="button button-clear button-balanced" style="" ng-if="!leave.isApproved && leave.isRevoked" ng-disabled="true">Approve</button>
+		  	<p class="button button-clear button-balanced button-small" style="max-height:70px" ng-if="leave.isApproved">Approved on </br>{{leave.inspectedOn | date:'mediumDate'}}</p>
+		  	<button class="button button-clear button-assertive" style="" ng-if="!leave.isRejected && !leave.isRevoked" ng-click="">Reject</button>
+		  	<button class="button button-clear button-assertive" style="" ng-if="!leave.isRejected && leave.isRevoked" ng-disabled="true">Reject</button>
+		  	<p class="button button-clear button-assertive button-small" style="max-height:70px" ng-if="leave.isRejected">Rejected on </br>{{leave.inspectedOn | date:'mediumDate'}}</p>
+	  	</div>
+  	</div>
   </ion-content>
 </ion-view>
