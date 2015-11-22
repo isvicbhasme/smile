@@ -29,3 +29,7 @@
 .rounded-corner {
 	border-radius: 5px;
 }
+
+h4, h5, h6 {
+	color: #666;
+}
