@@ -64,7 +64,8 @@ servicesModule.factory('HistoryService', function($ionicHistory){
   var dontStoreThisPage = function() {
     $ionicHistory.nextViewOptions({
           disableAnimate: true,
-          disableBack: true
+          disableBack: true,
+          historyRoot: true
       });
   }
 
@@ -73,8 +74,10 @@ servicesModule.factory('HistoryService', function($ionicHistory){
   }
 
   var clearAllAndDontStoreThisPage = function() {
+    console.log("Before clearing: "+JSON.stringify($ionicHistory.viewHistory()));
     $ionicHistory.clearHistory();
     dontStoreThisPage();
+    console.log("After clearing: "+JSON.stringify($ionicHistory.viewHistory()));
   }
 
   return {
