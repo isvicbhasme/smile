@@ -32,6 +32,7 @@ servicesModule.factory('AuthService', function(){
         var userObject = Parse.Object.extend("User");
         var query = new Parse.Query(userObject);
         query.include("roleId");
+        query.select("roleId");
         query.equalTo("objectId", Parse.User.current().id);
         query.find({
           error : function(){
@@ -74,10 +75,8 @@ servicesModule.factory('HistoryService', function($ionicHistory){
   }
 
   var clearAllAndDontStoreThisPage = function() {
-    console.log("Before clearing: "+JSON.stringify($ionicHistory.viewHistory()));
     $ionicHistory.clearHistory();
     dontStoreThisPage();
-    console.log("After clearing: "+JSON.stringify($ionicHistory.viewHistory()));
   }
 
   return {

@@ -1,7 +1,7 @@
 'use strict';
 var appModule = angular.module('app.controllers', ['app.services']);
 
-appModule.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService) {
+appModule.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService, BasicApiService) {
 
   var isLoggedIn = AuthService.isAuthenticated();
   if(!isLoggedIn) {
@@ -147,7 +147,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
 
   var revokeLeave = function(leave) {
     var leaveQuery = new Parse.Query(Parse.Object.extend("Leave"));
-    leaveQuery.equalTo("objectId", leave.identification);
+    leaveQuery.equalTo("objectId", leave.id);
     leaveQuery.first().then(function(result) {
       if(result)
       {
@@ -156,7 +156,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
         result.set("revokedOn", currentDate);
         result.save().then(function() {
           for (var i = $scope.leaves.list.length - 1; i >= 0; i--) {
-            if($scope.leaves.list[i].identification == leave.identification) {
+            if($scope.leaves.list[i].id == leave.id) {
               $scope.leaves.list[i].isRevoked = true;
               $scope.leaves.list[i].revokedOn = currentDate;
               $scope.$apply();
@@ -191,7 +191,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
     $scope.leaves.count = results.length;
     results.forEach(function(dbData, index) {
       var leave = {};
-      leave.identification = dbData.id;
+      leave.id = dbData.id;
       leave.createdOn = dbData.get("createdAt");
       leave.reason = dbData.get("reason");
       leave.from = dbData.get("leaveFrom");
@@ -215,56 +215,100 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
   });
 });
 
-appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, AuthService, BasicApiService) {
+appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPopup, AuthService, BasicApiService) {
   if(!AuthService.isAuthenticated()) {
     $state.go('login');
     return;
   }
 
-  var confirmAndApprove = function(){
+  var currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
 
+  var confirmAndApprove = function(){
   }
 
   var confirmAndReject = function(){
-    console.log("Hello");
   }
 
-  $scope.leaves = {
+  $scope.filteredLeaves = {
     list: [],
     approve: confirmAndApprove,
-    reject: confirmAndReject,
-    test: confirmAndReject
+    reject: confirmAndReject
   };
 
-  var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
-  leavesQuery.include("inspectedBy");
-  leavesQuery.notEqualTo("userId", Parse.User.current());
-  leavesQuery.find().then(function(results) {
-    $scope.leaves.count = results.length;
-    results.forEach(function(dbData, index) {
-      var leave = {};
-      leave.identification = dbData.id;
-      leave.createdOn = dbData.get("createdAt");
-      leave.reason = dbData.get("reason");
-      leave.from = dbData.get("leaveFrom");
-      if(!BasicApiService.isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
-        leave.to = dbData.get("leaveTo");
+  var queryParams = {
+    from: currentDate,
+    to: null
+  }
+
+  $scope.filterParams = {
+    from: null,
+    to: null
+  }
+
+  $scope.filterParams.fromDateCallback = function (val) {
+      if (val) { 
+        $scope.filterParams.from = val;
       }
-      leave.isRejected = dbData.get("isRejected");
-      leave.isRevoked = dbData.get("isRevoked");
-      if(leave.isRevoked)
-      {
-        leave.revokedOn = dbData.get("revokedOn");
+  }
+  $scope.filterParams.toDateCallback = function (val) {
+      if (val) { 
+        $scope.filterParams.to = val;
       }
-      leave.isApproved = dbData.get("isApproved");
-      if(leave.isApproved || leave.isRejected) {
-        leave.inspectedBy = dbData.get("inspectedBy").get("username");
-        leave.inspectedOn = dbData.get("inspectedOn");
-      }
-      $scope.leaves.list.push(leave);
+  }
+
+
+  var runQuery = function() {
+    var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
+    leavesQuery.include("inspectedBy");
+    leavesQuery.notEqualTo("userId", Parse.User.current());
+    leavesQuery.greaterThanOrEqualTo("leaveFrom", queryParams.from);
+    if(queryParams.to != null) {
+      leavesQuery.lessThanOrEqualTo("leaveTo", queryParams.to);
+    }
+    leavesQuery.find().then(function(results) {
+      var leaves = [];
+      results.forEach(function(dbData, index) {
+        var leave = {};
+        leave.id = dbData.id;
+        leave.createdOn = dbData.get("createdAt");
+        leave.reason = dbData.get("reason");
+        leave.from = dbData.get("leaveFrom");
+        if(!BasicApiService.isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
+          leave.to = dbData.get("leaveTo");
+        }
+        if(queryParams.to == null || dbData.get("leaveTo").getTime() > queryParams.to.getTime()) {
+          queryParams.to = dbData.get("leaveTo");
+        }
+        leave.isRejected = dbData.get("isRejected");
+        leave.isRevoked = dbData.get("isRevoked");
+        if(leave.isRevoked)
+        {
+          leave.revokedOn = dbData.get("revokedOn");
+        }
+        leave.isApproved = dbData.get("isApproved");
+        if(leave.isApproved || leave.isRejected) {
+          leave.inspectedBy = dbData.get("inspectedBy").get("username");
+          leave.inspectedOn = dbData.get("inspectedOn");
+        }
+        leaves.push(leave);
+      });
+    $scope.filteredLeaves.list = leaves;
+    $scope.$apply();
     });
-  $scope.$apply();
-  });
+  }
+
+  var validateFilters = function() {
+    var result = { valid: false, message: ""};
+    if($scope.filterParams.from == null ||
+       $scope.filterParams.to == null ||
+       $scope.filterParams.from > $scope.filterParams.to) {
+      result.message = "'From' date should occur before 'to' date.";
+      return result;
+    }
+    result.valid = true;
+    return result;
+  }
 
   $ionicModal.fromTemplateUrl('templates/leaveApproveFilters.html', {
     scope: $scope
@@ -272,17 +316,44 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, AuthServ
     $scope.modal = modal;
   });
 
-  $scope.openModal = function() {
+  $scope.showFilters = function() {
+    $scope.filterParams.from = queryParams.from;
+    if(queryParams.to == null) {
+      $scope.filterParams.to = queryParams.from;
+    } else {
+      $scope.filterParams.to = queryParams.to;
+    }
     $scope.modal.show()
   }
 
-  $scope.closeModal = function() {
+  $scope.cancelFilters = function() {
     $scope.modal.hide();
-  };
+  }
+
+  $scope.applyFilters = function() {
+    var validationResult = validateFilters();
+    if(!validationResult.valid)
+    {
+      $ionicPopup.alert({
+        title: "Form Validation",
+        template: "Oops! "+validationResult.message
+      });
+    }
+    else {
+      if( !BasicApiService.isSameDate(queryParams.from, $scope.filterParams.from)
+        || !BasicApiService.isSameDate(queryParams.to, $scope.filterParams.to)) {
+        queryParams.from = $scope.filterParams.from;
+        queryParams.to = $scope.filterParams.to;
+        runQuery();
+      }
+      $scope.modal.hide();
+    }
+  }
 
   $scope.$on('$destroy', function() {
     $scope.modal.remove();
   });
+  runQuery();
 });
 
 appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService){

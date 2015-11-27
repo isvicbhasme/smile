@@ -1,13 +1,19 @@
 <ion-view view-title="Approve Leaves">
+<ion-nav-buttons side="right">
+	<button class="button button-icon icon ion-funnel" ng-click="showFilters()"></button>
+</ion-nav-buttons>
   <ion-content>
-    <div class="list card" ng-repeat="leave in leaves.list">
+  	<h5 class="padding-vertical padding-horizontal balanced" ng-if="filteredLeaves.list.length == 0">
+  		Hurray! No leaves for approval.
+  	</h5>
+    <div class="list card" ng-repeat="leave in filteredLeaves.list">
 
 		<div class="item item-icon-left item-divider">
 			<i ng-if="leave.isApproved && leave.isRevoked == false" class="icon ion-checkmark-round approved-color"> </i>
 			<i ng-if="leave.isRejected && leave.isRevoked == false" class="icon ion-close-round rejected-color"> </i>
 			<i ng-if="(leave.isRejected == false && leave.isApproved == false) || leave.isRevoked" class="icon ion-alert waiting-color"> </i>
-			<h2 ng-if="leave.to != null">{{leave.from | date:'mediumDate'}} to {{leave.to | date:'mediumDate'}}</h2>
-			<h2 ng-if="leave.to == null">{{leave.from | date:'mediumDate'}}</h2>
+			<h3 ng-if="leave.to != null">{{leave.from | date:'mediumDate'}} to {{leave.to | date:'mediumDate'}}</h3>
+			<h3 ng-if="leave.to == null">{{leave.from | date:'mediumDate'}}</h3>
 			<p ng-if="leave.isApproved && !leave.isRevoked">Approved by {{leave.inspectedBy}}</p>
 			<p ng-if="leave.isRejected && !leave.isRevoked">Rejected by {{leave.inspectedBy}}</p>
 			<p ng-if="leave.isRevoked">Revoked on {{leave.revokedOn | date:'mediumDate'}}</p>
@@ -20,7 +26,7 @@
 			</p>
 
 			<div class="card-status-bar">
-				<p style="margin-top:0; margin-bottom:0" >Applied on {{leave.createdOn | date:'mediumDate'}}</p>
+				<h4 class="balanced" style="margin-top:0; margin-bottom:0" >Applied on {{leave.createdOn | date:'mediumDate'}}</h4>
 			</div>
 		</div>
 		<div class="button-bar">
