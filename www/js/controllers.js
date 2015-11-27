@@ -103,7 +103,7 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
     return result;
   }
 
-  $scope.applyLeave = function() {
+  $scope.applyLeave = function(form) {
     var validationResult = isFormValid();
     if(!validationResult.valid)
     {
@@ -128,6 +128,10 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
           title: "Leave Application",
           template: "Leave application submitted!"
         });
+        $scope.data.reason = "";
+        form.$setPristine();
+        form.$setUntouched();
+        $state.go("app.leaves.view", {cache: false});
       },
       error: function(leave, error) {
         $ionicPopup.alert({
