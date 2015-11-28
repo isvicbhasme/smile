@@ -2,7 +2,11 @@
 <ion-nav-buttons side="right">
 	<button class="button button-icon icon ion-funnel" ng-click="showFilters()"></button>
 </ion-nav-buttons>
-  <ion-content>
+  	<ion-content>
+  	<ion-refresher
+	    pulling-text="Pull down to refresh..."
+	    on-refresh="filteredLeaves.refresh()">
+	</ion-refresher>
   	<h5 class="padding-vertical padding-horizontal balanced" ng-if="filteredLeaves.list.length == 0">
   		Hurray! No leaves for approval.
   	</h5>

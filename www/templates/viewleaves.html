@@ -1,5 +1,9 @@
 <ion-view view-title="View Leaves" syle="background-color: #1F7FA1;" >
 <ion-content>
+<ion-refresher
+    pulling-text="Pull down to refresh..."
+    on-refresh="leaves.refresh()">
+</ion-refresher>
 <div class="list card" ng-repeat="leave in leaves.list">
 
 	<div class="item item-icon-left item-icon-right">

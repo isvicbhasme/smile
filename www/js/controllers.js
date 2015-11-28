@@ -149,6 +149,12 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
     return;
   }
 
+  var refresh = function() {
+    runQuery().then(function() {
+      $scope.$broadcast('scroll.refreshComplete');
+    });
+  }
+
   var revokeLeave = function(leave) {
     var leaveQuery = new Parse.Query(Parse.Object.extend("Leave"));
     leaveQuery.equalTo("objectId", leave.id);
@@ -185,38 +191,47 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
 
   $scope.leaves = {
     list: [],
-    confirmRevoke: confirmLeaveRevoke
+    confirmRevoke: confirmLeaveRevoke,
+    refresh: refresh
   };
 
-  var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
-  leavesQuery.include("inspectedBy");
-  leavesQuery.equalTo("userId", Parse.User.current());
-  leavesQuery.find().then(function(results) {
-    $scope.leaves.count = results.length;
-    results.forEach(function(dbData, index) {
-      var leave = {};
-      leave.id = dbData.id;
-      leave.createdOn = dbData.get("createdAt");
-      leave.reason = dbData.get("reason");
-      leave.from = dbData.get("leaveFrom");
-      if(!BasicApiService.isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
-        leave.to = dbData.get("leaveTo");
-      }
-      leave.isRejected = dbData.get("isRejected");
-      leave.isRevoked = dbData.get("isRevoked");
-      if(leave.isRevoked)
-      {
-        leave.revokedOn = dbData.get("revokedOn");
-      }
-      leave.isApproved = dbData.get("isApproved");
-      if(leave.isApproved || leave.isRejected) {
-        leave.inspectedBy = dbData.get("inspectedBy").get("username");
-        leave.inspectedOn = dbData.get("inspectedOn");
-      }
-      $scope.leaves.list.push(leave);
+  var runQuery = function() {
+    return new Promise(function(resolve, reject) {
+      var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
+      leavesQuery.include("inspectedBy");
+      leavesQuery.equalTo("userId", Parse.User.current());
+      leavesQuery.find().then(function(results) {
+        $scope.leaves.count = results.length;
+        var leavesList = [];
+        results.forEach(function(dbData, index) {
+          var leave = {};
+          leave.id = dbData.id;
+          leave.createdOn = dbData.get("createdAt");
+          leave.reason = dbData.get("reason");
+          leave.from = dbData.get("leaveFrom");
+          if(!BasicApiService.isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
+            leave.to = dbData.get("leaveTo");
+          }
+          leave.isRejected = dbData.get("isRejected");
+          leave.isRevoked = dbData.get("isRevoked");
+          if(leave.isRevoked)
+          {
+            leave.revokedOn = dbData.get("revokedOn");
+          }
+          leave.isApproved = dbData.get("isApproved");
+          if(leave.isApproved || leave.isRejected) {
+            leave.inspectedBy = dbData.get("inspectedBy").get("username");
+            leave.inspectedOn = dbData.get("inspectedOn");
+          }
+          leavesList.push(leave);
+        });
+        $scope.leaves.list = leavesList;
+        $scope.$apply();
+        resolve();
+      });
     });
-  $scope.$apply();
-  });
+  }
+  runQuery();
 });
 
 appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPopup, AuthService, BasicApiService) {
@@ -234,10 +249,17 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
   var confirmAndReject = function(){
   }
 
+  var refresh = function() {
+    runQuery().then(function() {
+      $scope.$broadcast('scroll.refreshComplete');
+    });
+  }
+
   $scope.filteredLeaves = {
     list: [],
     approve: confirmAndApprove,
-    reject: confirmAndReject
+    reject: confirmAndReject,
+    refresh: refresh
   };
 
   var queryParams = {
@@ -263,42 +285,45 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
 
 
   var runQuery = function() {
-    var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
-    leavesQuery.include("inspectedBy");
-    leavesQuery.notEqualTo("userId", Parse.User.current());
-    leavesQuery.greaterThanOrEqualTo("leaveFrom", queryParams.from);
-    if(queryParams.to != null) {
-      leavesQuery.lessThanOrEqualTo("leaveTo", queryParams.to);
-    }
-    leavesQuery.find().then(function(results) {
-      var leaves = [];
-      results.forEach(function(dbData, index) {
-        var leave = {};
-        leave.id = dbData.id;
-        leave.createdOn = dbData.get("createdAt");
-        leave.reason = dbData.get("reason");
-        leave.from = dbData.get("leaveFrom");
-        if(!BasicApiService.isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
-          leave.to = dbData.get("leaveTo");
-        }
-        if(queryParams.to == null || dbData.get("leaveTo").getTime() > queryParams.to.getTime()) {
-          queryParams.to = dbData.get("leaveTo");
-        }
-        leave.isRejected = dbData.get("isRejected");
-        leave.isRevoked = dbData.get("isRevoked");
-        if(leave.isRevoked)
-        {
-          leave.revokedOn = dbData.get("revokedOn");
-        }
-        leave.isApproved = dbData.get("isApproved");
-        if(leave.isApproved || leave.isRejected) {
-          leave.inspectedBy = dbData.get("inspectedBy").get("username");
-          leave.inspectedOn = dbData.get("inspectedOn");
-        }
-        leaves.push(leave);
+    return new Promise(function(resolve, reject) {
+      var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
+      leavesQuery.include("inspectedBy");
+      leavesQuery.notEqualTo("userId", Parse.User.current());
+      leavesQuery.greaterThanOrEqualTo("leaveFrom", queryParams.from);
+      if(queryParams.to != null) {
+        leavesQuery.lessThanOrEqualTo("leaveTo", queryParams.to);
+      }
+      leavesQuery.find().then(function(results) {
+        var leaves = [];
+        results.forEach(function(dbData, index) {
+          var leave = {};
+          leave.id = dbData.id;
+          leave.createdOn = dbData.get("createdAt");
+          leave.reason = dbData.get("reason");
+          leave.from = dbData.get("leaveFrom");
+          if(!BasicApiService.isSameDate(dbData.get("leaveFrom"), dbData.get("leaveTo"))) {
+            leave.to = dbData.get("leaveTo");
+          }
+          if(queryParams.to == null || dbData.get("leaveTo").getTime() > queryParams.to.getTime()) {
+            queryParams.to = dbData.get("leaveTo");
+          }
+          leave.isRejected = dbData.get("isRejected");
+          leave.isRevoked = dbData.get("isRevoked");
+          if(leave.isRevoked)
+          {
+            leave.revokedOn = dbData.get("revokedOn");
+          }
+          leave.isApproved = dbData.get("isApproved");
+          if(leave.isApproved || leave.isRejected) {
+            leave.inspectedBy = dbData.get("inspectedBy").get("username");
+            leave.inspectedOn = dbData.get("inspectedOn");
+          }
+          leaves.push(leave);
+        });
+        $scope.filteredLeaves.list = leaves;
+        $scope.$apply();
+        resolve();
       });
-    $scope.filteredLeaves.list = leaves;
-    $scope.$apply();
     });
   }
 
@@ -357,6 +382,7 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
   $scope.$on('$destroy', function() {
     $scope.modal.remove();
   });
+
   runQuery();
 });
 
