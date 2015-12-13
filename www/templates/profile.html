@@ -1,0 +1,65 @@
+<ion-view view-title="Profile">
+	<ion-content>
+	<script type="text/ng-template" id="error-messages">
+	  <div class="error-msg" ng-message="required">This field is required</div>
+	  <div class="error-msg" ng-message="email">Enter a valid email address</div>
+	</script>
+  	<div class="list">
+
+	  	<div class="item item-avatar">
+		    <img src="img/gentleman.png"></img>
+		    <h2 ng-if="profile.firstName.length > 0 || profile.lastName.length > 0">{{profile.firstName}} {{profile.lastName}}</h2>
+		    <span ng-if="profile.firstName.length == 0 && profile.lastName.length == 0" class="royal">No name</span>
+		    <p>{{profile.birthdate | date:'MMMM/dd/yyyy'}}</p>
+	  	</div>
+	  	
+		<form name="firstNameForm" novalidate>
+		  	<!-- Firstname -->
+		    <div class="item item-icon-left item-icon-right">
+		    	<i class="icon ion-card" ></i>
+		    	<span ng-if="!editable.firstName && (profile.firstName == null || profile.firstName.length == 0)" class="royal">Enter first name here</span>
+		    	<span ng-if="!editable.firstName && profile.firstName.length > 0">{{profile.firstName}}</span>
+		    	<div class="item-input" ng-if="editable.firstName">
+		      		<input type="text" name="firstName" ng-model="profile.firstName" style="border-bottom: 1px solid black;" ng-required="true"/>
+		      	</div>
+		      	<div ng-messages="firstNameForm.firstName.$error" ng-show="firstNameForm.firstName.$touched" role="alert">
+		          <div ng-messages-include="error-messages"></div>
+		        </div>
+		    	<button ng-if="editable.firstName" class="button button-icon icon ion-checkmark-round" ng-disabled="firstNameForm.$invalid" ng-click="saveFirstName()"></button>
+		    	<button ng-if="!editable.firstName" class="button button-icon icon ion-edit" ng-click="editable.firstName=true"></button>
+		    </div>
+	    </form>
+	  	
+	  	<!-- Lastname -->
+	    <div class="item item-icon-left item-icon-right">
+	    	<i class="icon ion-ribbon-b" ></i>
+	    	<span ng-if="!editable.lastName && (profile.lastName == null || profile.lastName.length == 0)" class="royal">Enter last name here</span>
+	    	<span ng-if="!editable.lastName && profile.lastName.length > 0">{{profile.lastName}}</span>
+	    	<div class="item-input" ng-if="editable.lastName">
+	      		<input type="text" name="lastName" ng-model="profile.lastName" style="border-bottom: 1px solid black;"/>
+	      	</div>
+	    	<button ng-if="editable.lastName" class="button button-icon icon ion-checkmark-round" ng-click="saveLastName()"></button>
+	    	<button ng-if="!editable.lastName" class="button button-icon icon ion-edit" ng-click="editable.lastName=true"></button>
+	    </div>
+	  	
+		<form name="mobileForm" novalidate>
+		  	<!-- Mobile Number -->
+		    <div class="item item-icon-left item-icon-right">
+		    	<i class="icon ion-android-call" ></i>
+		    	<span ng-if="!editable.mobileNumber && (profile.mobileNumber == null || profile.mobileNumber.length == 0)" class="royal">Enter mobile num here</span>
+		    	<span ng-if="!editable.mobileNumber && profile.mobileNumber != null && profile.mobileNumber > 0">{{profile.mobileNumber}}</span>
+		    	<div class="item-input" ng-if="editable.mobileNumber">
+		      		<input type="text" name="mobNum" ng-model="profile.mobileNumber" ng-pattern="/^[+]?[0-9]+$/" style="border-bottom: 1px solid black;"/>
+		      	</div>
+			    <div ng-messages="mobileForm.mobNum.$error" ng-show="mobileForm.mobNum.$touched" role="alert">
+		          <div ng-messages-include="error-messages"></div>
+		          <div class="error-msg" ng-message="pattern">Enter a valid mobile number</div>
+		        </div>
+		    	<button ng-if="editable.mobileNumber" class="button button-icon icon ion-checkmark-round" ng-disabled="mobileForm.$invalid" ng-click="saveMobileNumber()"></button>
+		    	<button ng-if="!editable.mobileNumber" class="button button-icon icon ion-edit" ng-click="editable.mobileNumber=true"></button>
+		    </div>
+		</form>
+
+  	</div>
+	</ion-content>
+</ion-view>

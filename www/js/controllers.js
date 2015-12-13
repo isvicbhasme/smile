@@ -49,6 +49,7 @@ appModule.controller('LeaveCtrl', function($scope, AuthService) {
   $scope.isLeader = false;
   AuthService.getUserRole().then(function(role) {
     $scope.isLeader = ("leader" == role);
+    $scope.$apply();
   }, function(msg) {
     console.log(msg);
   });
@@ -152,6 +153,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
   var refresh = function() {
     runQuery().then(function() {
       $scope.$broadcast('scroll.refreshComplete');
+      $scope.$apply();
     });
   }
 
@@ -226,12 +228,13 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
           leavesList.push(leave);
         });
         $scope.leaves.list = leavesList;
-        $scope.$apply();
         resolve();
       });
     });
   }
-  runQuery();
+  runQuery().then(function() {
+    $scope.$apply();
+  });
 });
 
 appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPopup, AuthService, BasicApiService) {
@@ -252,6 +255,7 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
   var refresh = function() {
     runQuery().then(function() {
       $scope.$broadcast('scroll.refreshComplete');
+      $scope.$apply();
     });
   }
 
@@ -321,7 +325,6 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
           leaves.push(leave);
         });
         $scope.filteredLeaves.list = leaves;
-        $scope.$apply();
         resolve();
       });
     });
@@ -383,7 +386,9 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
     $scope.modal.remove();
   });
 
-  runQuery();
+  runQuery().then(function() {
+    $scope.$apply();
+  });
 });
 
 appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService){
@@ -427,6 +432,7 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
     var userObject = Parse.Object.extend("User");
     var query = new Parse.Query(userObject);
     query.include("roleId");
+    query.select("roleId");
     query.equalTo("objectId", user.id);
     query.find({
       error : function(){
@@ -555,3 +561,79 @@ appModule.controller('ArticleCtrl', function($scope, $stateParams, $state, AuthS
   $scope.type = $stateParams.type;
 });
 
+appModule.controller('ProfileCtrl', function($scope, AuthService, $state){
+  if(!AuthService.isAuthenticated()) {
+    $state.go('login');
+    return;
+  }
+
+  var userProfile = null;
+
+  $scope.saveFirstName = function() {
+    if(userProfile.get("firstName") != $scope.profile.firstName) {
+      userProfile.set("firstName", $scope.profile.firstName);
+      userProfile.save();
+    }
+    $scope.editable.firstName = false;
+  }
+
+  $scope.saveLastName = function() {
+    if(userProfile.get("lastName") != $scope.profile.lastName) {
+      userProfile.set("lastName", $scope.profile.lastName);
+      userProfile.save();
+    }
+    $scope.editable.lastName = false;
+  }
+
+  $scope.saveMobileNumber = function() {
+    if(userProfile.get("mobileNumber") != $scope.profile.mobileNumber) {
+      userProfile.set("mobileNumber", $scope.profile.mobileNumber);
+      userProfile.save();
+    }
+    $scope.editable.mobileNumber = false;
+  }
+
+  $scope.profile = {
+    firstName: "",
+    lastName: "",
+    mobileNumber: "",
+    isMale: true
+  }
+
+  $scope.editable = {
+    firstName: false,
+    lastName: false,
+    mobileNumber: false
+  }
+  
+  var runQuery = function() {
+    return new Promise(function(resolve, reject) {
+      var profileQuery = new Parse.Query(Parse.Object.extend("Profile"));
+      profileQuery.equalTo("userId", Parse.User.current());
+      profileQuery.find().then(function(results) {
+        if(results.length > 0) {
+          $scope.profile.firstName = results[0].get("firstName");
+          $scope.profile.lastName = results[0].get("lastName");
+          $scope.profile.mobileNumber = results[0].get("mobileNumber");
+          $scope.profile.isMale = results[0].get("isMale");
+          $scope.profile.birthdate = results[0].get("birthdate");
+          userProfile = results[0];
+          resolve();
+        } else {
+          reject();
+        }
+      }, function() {
+        reject();
+      });
+    });
+  }
+  runQuery().then(function() {
+    $scope.$apply();
+  }, function() {
+    if(userProfile == null) {
+      var Profile = new Parse.Object.extend("Profile");
+      userProfile = new Profile();
+      userProfile.set("userId", Parse.User.current());
+    }
+  });
+});

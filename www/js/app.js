@@ -96,6 +96,16 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages', 'ionic-datepick
     }
   })
 
+  .state('app.profile', {
+    url: '/profile',
+    views: {
+      'menuContent': {
+        templateUrl: 'templates/profile.html',
+        controller: 'ProfileCtrl'
+      }
+    }
+  })
+
   .state('login', {
     url: '/login',
     templateUrl: 'templates/login.html',
