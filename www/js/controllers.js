@@ -245,11 +245,58 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
 
   var currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
+  var queryResults = [];
 
-  var confirmAndApprove = function(){
+  var confirmAndApprove = function(leave){
+    $ionicPopup.confirm({
+      title: 'Approve leave',
+      template: 'Are you sure you want to approve this leave?'
+    }).then(function(response) {
+      if(response) {
+        for(var i=0; i<queryResults.length; ++i) {
+          if(queryResults[i].id == leave.id) {
+            queryResults[i].set("isApproved", true);
+            queryResults[i].set("isRejected", false);
+            queryResults[i].set("inspectedBy", Parse.User.current());
+            queryResults[i].set("inspectedOn", currentDate);
+            queryResults[i].save().then(function() {
+              leave.isApproved = true;
+              leave.isRejected = false;
+              leave.inspectedBy = Parse.User.current().getUsername();
+              leave.inspectedOn = currentDate;
+              $scope.$apply();
+            });
+            return;
+          }
+        }
+      }
+    });
   }
 
-  var confirmAndReject = function(){
+  var confirmAndReject = function(leave){
+    $ionicPopup.confirm({
+      title: 'Reject leave',
+      template: 'Are you sure you want to reject this leave?'
+    }).then(function(response) {
+      if(response) {
+        for(var i=0; i<queryResults.length; ++i) {
+          if(queryResults[i].id == leave.id) {
+            queryResults[i].set("isApproved", false);
+            queryResults[i].set("isRejected", true);
+            queryResults[i].set("inspectedBy", Parse.User.current());
+            queryResults[i].set("inspectedOn", currentDate);
+            queryResults[i].save().then(function() {
+              leave.isApproved = false;
+              leave.isRejected = true;
+              leave.inspectedBy = Parse.User.current().getUsername();
+              leave.inspectedOn = currentDate;
+              $scope.$apply();
+            });
+            return;
+          }
+        }
+      }
+    });
   }
 
   var refresh = function() {
@@ -325,6 +372,7 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
           leaves.push(leave);
         });
         $scope.filteredLeaves.list = leaves;
+        queryResults = results;
         resolve();
       });
     });
@@ -376,7 +424,9 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
         || !BasicApiService.isSameDate(queryParams.to, $scope.filterParams.to)) {
         queryParams.from = $scope.filterParams.from;
         queryParams.to = $scope.filterParams.to;
-        runQuery();
+        runQuery().then(function() {
+          $scope.$apply();
+        });
       }
       $scope.modal.hide();
     }
