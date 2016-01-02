@@ -45,10 +45,10 @@ appModule.controller('ArticlesCtrl', function($scope, $state, AuthService) {
   ];
 });
 
-appModule.controller('LeaveCtrl', function($scope, AuthService) {
+appModule.controller('LeaveCtrl', function($scope, AuthService, AuthServiceConstants) {
   $scope.isLeader = false;
   AuthService.getUserRole().then(function(role) {
-    $scope.isLeader = ("leader" == role);
+    $scope.isLeader = (role >= AuthServiceConstants.LEADER_BITSET);
     $scope.$apply();
   }, function(msg) {
     console.log(msg);
@@ -479,7 +479,6 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
   }
 
   var getRoleFromDb = function(user, callback) {
-    var role = '';
     var userObject = Parse.Object.extend("User");
     var query = new Parse.Query(userObject);
     query.include("roleId");
@@ -491,8 +490,8 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
       }
     }).then(function(results) {
       var roleIdObject = results[0].get("roleId");
-      if(role = roleIdObject.get("name"))
-        callback(role);
+      if(roleIdObject.get("name") && roleIdObject.get("bitmap"))
+        callback(roleIdObject.get("bitmap"));
     });
   }
 

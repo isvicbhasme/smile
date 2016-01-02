@@ -1,7 +1,7 @@
 var servicesModule = angular.module("app.services", []);
 
 servicesModule.factory('AuthService', function(){
-  var role = '';
+  var role = 0;
 
   var isAuthenticated = function() {
     return Parse.User.current() && Parse.User.current().authenticated();
@@ -15,20 +15,30 @@ servicesModule.factory('AuthService', function(){
   }
 
   var clearUserRole = function() {
-    role = '';
+    role = 0;
   }
 
   var setUserRole = function(roleP) {
     role = roleP;
   }
 
+  /**
+   * @return int Returns a bitmap representing the roles of this user.
+   * 
+   * A combination of the bellow bits shall be returned
+   * 0 : Unknown user/role (Either user is not authenticated or does not have a role alloted)
+   * 1st bit : Greeter only (1 - AuthServiceConstants.GREETER_BITSET)
+   * 2nd bit : Leader only (3 - AuthServiceConstants.LEADER_BITSET)
+   * 4th bit : Admin only (7 - AuthServiceConstants.ADMIN_BITSET)
+   *
+   */
   var getUserRole = function() {
     return new Promise(function(resolve, reject) {
       if(!Parse.User.current() || !Parse.User.current().authenticated) {
         clearUserRole();
         resolve(role);
       }
-      else if(role == "") {
+      else if(role == 0) {
         var userObject = Parse.Object.extend("User");
         var query = new Parse.Query(userObject);
         query.include("roleId");
@@ -39,15 +49,17 @@ servicesModule.factory('AuthService', function(){
             reject("Oops! I could not find your role. Are you an alien?");
           }
         }).then(function(results) {
-          if(results[0] != null && (role = results[0].get("roleId").get("name")) != "") // Assuming that all users have a role entry
-            resolve(role.trim().toLowerCase());
+          if(results[0] != null && results[0].get("roleId").get("name") != "") { // Assuming that all users have a role entry
+            role = results[0].get("roleId").get("bitmap");
+            resolve(role);
+          }
           else
             reject("Oops! Someone slipped & fell");
         });
       }
       else
       {
-        resolve(role.trim().toLowerCase());
+        resolve(role);
       }
     });
   }
@@ -129,12 +141,18 @@ servicesModule.factory('AuthServiceConstants', function(){
   var maxUsernameLength = 10;
   var minPasswordLength = 6;
   var maxPasswordLength = 14;
+  var adminBitset       = 7;
+  var leaderBitset      = 3;
+  var greeterBitset     = 1;
 
   return {
     minUsernameLength : minUsernameLength,
     maxUsernameLength : maxUsernameLength,
     minPasswordLength : minPasswordLength,
-    maxPasswordLength : maxPasswordLength
+    maxPasswordLength : maxPasswordLength,
+    ADMIN_BITSET      : adminBitset,
+    LEADER_BITSET     : leaderBitset,
+    GREETER_BITSET    : greeterBitset
   }
 });
 
