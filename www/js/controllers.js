@@ -132,7 +132,7 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
         $scope.data.reason = "";
         form.$setPristine();
         form.$setUntouched();
-        $state.go("app.leaves.view", {cache: false});
+        $state.go("app.leaves.view", {}, {reload: true}); // reload option will force the view to refresh to pull latest data
       },
       error: function(leave, error) {
         $ionicPopup.alert({
@@ -144,7 +144,7 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
   }
 });
 
-appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, BasicApiService, $ionicPopup) {
+appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, BasicApiService, $ionicPopup, $rootScope) {
   if(!AuthService.isAuthenticated()) {
     $state.go('login');
     return;
@@ -232,6 +232,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
       });
     });
   }
+
   runQuery().then(function() {
     $scope.$apply();
   });
