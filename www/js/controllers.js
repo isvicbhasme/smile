@@ -643,6 +643,18 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, $state){
     $scope.editable.mobileNumber = false;
   }
 
+  $scope.saveEmail = function() {
+    Parse.User.current().fetch({
+      success: function(user) {
+        if(user.getEmail() != $scope.profile.email) {
+          user.setEmail($scope.profile.email);
+          user.save();
+        }
+      }
+    });
+    $scope.editable.email = false;
+  }
+
   $scope.profile = {
     firstName: "",
     lastName: "",
@@ -668,7 +680,17 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, $state){
           $scope.profile.isMale = results[0].get("isMale");
           $scope.profile.birthdate = results[0].get("birthdate");
           userProfile = results[0];
-          resolve();
+          Parse.User.current().fetch({
+            success: function(user) {
+              if(user.getEmail() != $scope.profile.email) {
+                $scope.profile.email = user.getEmail();
+                resolve();
+              }
+            },
+            error: function(user, err) {
+              reject(err);
+            }
+          });
         } else {
           reject();
         }

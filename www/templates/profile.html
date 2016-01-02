@@ -20,7 +20,7 @@
 		    	<span ng-if="!editable.firstName && (profile.firstName == null || profile.firstName.length == 0)" class="royal">Enter first name here</span>
 		    	<span ng-if="!editable.firstName && profile.firstName.length > 0">{{profile.firstName}}</span>
 		    	<div class="item-input" ng-if="editable.firstName">
-		      		<input type="text" name="firstName" ng-model="profile.firstName" style="border-bottom: 1px solid black;" ng-required="true"/>
+		      		<input type="text" placeholder="First name" name="firstName" ng-model="profile.firstName" style="border-bottom: 1px solid black;" ng-required="true"/>
 		      	</div>
 		      	<div ng-messages="firstNameForm.firstName.$error" ng-show="firstNameForm.firstName.$touched" role="alert">
 		          <div ng-messages-include="error-messages"></div>
@@ -34,9 +34,9 @@
 	    <div class="item item-icon-left item-icon-right">
 	    	<i class="icon ion-ribbon-b" ></i>
 	    	<span ng-if="!editable.lastName && (profile.lastName == null || profile.lastName.length == 0)" class="royal">Enter last name here</span>
-	    	<span ng-if="!editable.lastName && profile.lastName.length > 0">{{profile.lastName}}</span>
+	    	<span ng-if="!editable.lastName && profile.lastName && profile.lastName.length > 0">{{profile.lastName}}</span>
 	    	<div class="item-input" ng-if="editable.lastName">
-	      		<input type="text" name="lastName" ng-model="profile.lastName" style="border-bottom: 1px solid black;"/>
+	      		<input type="text" placeholder="Last name" name="lastName" ng-model="profile.lastName" style="border-bottom: 1px solid black;"/>
 	      	</div>
 	    	<button ng-if="editable.lastName" class="button button-icon icon ion-checkmark-round" ng-click="saveLastName()"></button>
 	    	<button ng-if="!editable.lastName" class="button button-icon icon ion-edit" ng-click="editable.lastName=true"></button>
@@ -49,7 +49,7 @@
 		    	<span ng-if="!editable.mobileNumber && (profile.mobileNumber == null || profile.mobileNumber.length == 0)" class="royal">Enter mobile num here</span>
 		    	<span ng-if="!editable.mobileNumber && profile.mobileNumber != null && profile.mobileNumber > 0">{{profile.mobileNumber}}</span>
 		    	<div class="item-input" ng-if="editable.mobileNumber">
-		      		<input type="text" name="mobNum" ng-model="profile.mobileNumber" ng-pattern="/^[+]?[0-9]+$/" style="border-bottom: 1px solid black;"/>
+		      		<input type="text" placeholder="Mobile number" name="mobNum" ng-model="profile.mobileNumber" ng-pattern="/^[+]?[0-9]+$/" style="border-bottom: 1px solid black;"/>
 		      	</div>
 			    <div ng-messages="mobileForm.mobNum.$error" ng-show="mobileForm.mobNum.$touched" role="alert">
 		          <div ng-messages-include="error-messages"></div>
@@ -57,6 +57,24 @@
 		        </div>
 		    	<button ng-if="editable.mobileNumber" class="button button-icon icon ion-checkmark-round" ng-disabled="mobileForm.$invalid" ng-click="saveMobileNumber()"></button>
 		    	<button ng-if="!editable.mobileNumber" class="button button-icon icon ion-edit" ng-click="editable.mobileNumber=true"></button>
+		    </div>
+		</form>
+
+		<form name="emailForm" novalidate>
+		  	<!-- E-Mail -->
+		    <div class="item item-icon-left item-icon-right">
+		    	<i class="icon ion-email" ></i>
+		    	<span ng-if="!editable.email && (profile.email == null || profile.email.length == 0)" class="royal">Enter e-mail here</span>
+		    	<span ng-if="!editable.email && profile.email && profile.email.length > 0">{{profile.email}}</span>
+		    	<div class="item-input" ng-if="editable.email">
+		      		<input type="email" placeholder="E-mail" name="emailInput" ng-model="profile.email" ng-required="true" style="border-bottom: 1px solid black;"/>
+		      	</div>
+			    <div ng-messages="emailForm.emailInput.$error" ng-show="emailForm.emailInput.$touched" role="alert">
+		          <div ng-messages-include="error-messages"></div>
+		          <div class="error-msg" ng-message="pattern">Enter a valid e-mail address</div>
+		        </div>
+		    	<button ng-if="editable.email" class="button button-icon icon ion-checkmark-round" ng-disabled="emailForm.$invalid" ng-click="saveEmail()"></button>
+		    	<button ng-if="!editable.email" class="button button-icon icon ion-edit" ng-click="editable.email=true"></button>
 		    </div>
 		</form>
 
