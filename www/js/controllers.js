@@ -611,7 +611,7 @@ appModule.controller('ArticleCtrl', function($scope, $stateParams, $state, AuthS
   $scope.type = $stateParams.type;
 });
 
-appModule.controller('ProfileCtrl', function($scope, AuthService, $state){
+appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceConstants, $state, $ionicPopup){
   if(!AuthService.isAuthenticated()) {
     $state.go('login');
     return;
@@ -655,11 +655,84 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, $state){
     $scope.editable.email = false;
   }
 
+  $scope.savePassword = function() {
+    if($scope.profile.newPwd.length <= AuthServiceConstants.minPasswordLength ||
+      $scope.profile.newPwd.length >= AuthServiceConstants.maxPasswordLength) {
+      $ionicPopup.alert({
+        title: "Password update failed",
+        template: "Your new password should be "+AuthServiceConstants.minPasswordLength+" to "+AuthServiceConstants.maxPasswordLength+" chars long."
+      });
+      return;
+    }
+    if($scope.profile.newPwd !== $scope.profile.confPwd) {
+      $ionicPopup.alert({
+        title: "Password update failed",
+        template: "Your new passwords do not match."
+      });
+      return;
+    }
+    Parse.User.logIn(Parse.User.current().getUsername(), // Validate user's old password. (Old time's sake!)
+      $scope.profile.oldPwd,{
+      success: function() {
+        var user = Parse.User.current();
+        var username = Parse.User.current().getUsername();
+        var newPassword = $scope.profile.newPwd;
+        user.setPassword(newPassword);
+        user.save({                 // Save user's new password
+          success: function() {
+            Parse.User.logOut();
+            Parse.User.logIn(username, newPassword, {   // Relogin with new password (Refreshes session token!)
+              success: function() {
+                $ionicPopup.alert({
+                  title: "Password update successful",
+                  template: "Your password was updated successfully."
+                });
+                resetPasswordVarsInScope();
+              },
+              error: function(error) {
+                $ionicPopup.alert({
+                title: "Password update failed",
+                template: "Error "+error.code+": "+error.message+".\n Please report to admin and buy him a pack of tissues. Because he will shed tears when he hears this."
+              });
+              }
+            });
+          },
+          error: function(error) {
+            $ionicPopup.alert({
+              title: "Password update failed",
+              template: "Error "+error.code+": "+error.message+".\n Please report to admin."
+            });
+          return;
+          }
+        });
+      },
+      error: function(error) {
+        $ionicPopup.alert({
+          title: "Password update failed",
+          template: "Error: " + error.code + " " + error.message
+        });
+        return;
+      }
+    });
+  }
+
+  var resetPasswordVarsInScope = function() {
+    $scope.profile.oldPwd = "";
+    $scope.profile.newPwd = "";
+    $scope.profile.confPwd = "";
+    $scope.$apply();
+  }
+
   $scope.profile = {
     firstName: "",
     lastName: "",
     mobileNumber: "",
-    isMale: true
+    isMale: true,
+    oldPwd: "",
+    newPwd: "",
+    confPwd: "",
+    minPasswordLength: AuthServiceConstants.minPasswordLength,
+    maxPasswordLength: AuthServiceConstants.maxPasswordLength
   }
 
   $scope.editable = {
