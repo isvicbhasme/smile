@@ -98,42 +98,62 @@ servicesModule.factory('HistoryService', function($ionicHistory){
   };
 });
 
-servicesModule.factory('MenuListService', function() {
+servicesModule.factory('MenuListService', function(AuthService, AuthServiceConstants) {
+  var items = [];
   var getMenuList = function(isAuthenticated) {
-    var items = [];
-    if(isAuthenticated)
-    {
-      items = [
-        {
-          name: 'Leaves',
-          isLink: true,
-          link: '#/app/leaves/apply',
-          icon: 'ion-plus-round'
-        },
-        {
-          name: 'Articles',
-          isLink: true,
-          link: '#/app/articles',
-          icon: 'ion-information'
-        },
-        {
-          name: 'Profile',
-          isLink: true,
-          link: '#/app/profile',
-          icon: 'ion-person'
-        },
-        {
-          name: 'Logout',
-          isLink: false,
-          clickAction: 'logout()',
-          icon: 'ion-android-exit'
-        }
-      ];
-    }
-    return items;
+    return new Promise(function(resolve, reject) {
+      if(isAuthenticated)
+      {
+        items = [
+          {
+            name: 'Leaves',
+            isLink: true,
+            link: '#/app/leaves/apply',
+            icon: 'ion-plus-round'
+          },
+          {
+            name: 'Articles',
+            isLink: true,
+            link: '#/app/articles',
+            icon: 'ion-information'
+          },
+          {
+            name: 'Profile',
+            isLink: true,
+            link: '#/app/profile',
+            icon: 'ion-person'
+          }
+        ];
+        AuthService.getUserRole().then(function(role) {
+          if(role === AuthServiceConstants.ADMIN_BITSET) {
+            items.push({
+              name: 'Logout',
+              isLink: false,
+              clickAction: 'logout()',
+              icon: 'ion-android-exit'
+            });
+            resolve(items);
+          } else {
+            resolve(items);
+          }
+        });
+      }
+    });
   }
 
-  return { getMenuList: getMenuList }
+  var getMenuListSize = function() {
+    return items.length;
+  }
+
+  var clearMenuList = function() {
+    items = [];
+  }
+
+  return { 
+    getMenuList: getMenuList,
+    getMenuListSize: getMenuListSize,
+    clearMenuList: clearMenuList
+  }
 });
 
 servicesModule.factory('AuthServiceConstants', function(){

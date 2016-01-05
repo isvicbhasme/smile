@@ -10,10 +10,16 @@ appModule.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthServic
     $state.go('login');
     return;
   }
-  else
-  {
-    $scope.menuItems = MenuListService.getMenuList(isLoggedIn);
-  }
+
+  $scope.$on("$ionicView.afterEnter", function(){
+    if(isLoggedIn && MenuListService.getMenuListSize() == 0) {
+      $scope.menuItems = {}
+      MenuListService.getMenuList(isLoggedIn).then(function(items) {
+        $scope.menuItems = items;
+        $scope.$apply();
+      });
+    }
+  });
 
   $scope.logout = function() {
     Parse.User.logOut().then(
@@ -508,7 +514,8 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
     Parse.User.logIn($scope.loginData.username, $scope.loginData.password)
     .then(function(user) {
       HistoryService.clearAllAndDontStoreThisPage();
-      getRoleFromDb(user, AuthService.setUserRole);
+      AuthService.clearUserRole();
+      MenuListService.clearMenuList();
       $state.go('app.articles');
     },function(error) {
       $ionicPopup.alert({
