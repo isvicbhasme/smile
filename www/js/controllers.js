@@ -779,6 +779,7 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceCon
         var Profile = new Parse.Object.extend("Profile");
         userProfile = new Profile();
         userProfile.set("userId", Parse.User.current());
+        $scope.$apply();
       }
     });
   });
