@@ -26,7 +26,7 @@ appModule.controller('AppCtrl', function($scope, $state, $ionicPopup, AuthServic
       function(){
       HistoryService.clearAllAndDontStoreThisPage();
       AuthService.clearUserRole();
-      $state.go('login');
+      ionic.Platform.exitApp();
     }, function(error) {
         $ionicPopup.alert({
           title: "User State",

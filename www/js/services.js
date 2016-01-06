@@ -127,7 +127,7 @@ servicesModule.factory('MenuListService', function(AuthService, AuthServiceConst
         AuthService.getUserRole().then(function(role) {
           if(role === AuthServiceConstants.ADMIN_BITSET) {
             items.push({
-              name: 'Logout',
+              name: 'Logout & Exit',
               isLink: false,
               clickAction: 'logout()',
               icon: 'ion-android-exit'
