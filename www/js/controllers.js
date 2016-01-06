@@ -760,17 +760,7 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceCon
           $scope.profile.isMale = results[0].get("isMale");
           $scope.profile.birthdate = results[0].get("birthdate");
           userProfile = results[0];
-          Parse.User.current().fetch({
-            success: function(user) {
-              if(user.getEmail() != $scope.profile.email) {
-                $scope.profile.email = user.getEmail();
-                resolve();
-              }
-            },
-            error: function(user, err) {
-              reject(err);
-            }
-          });
+          resolve();
         } else {
           reject();
         }
@@ -779,13 +769,17 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceCon
       });
     });
   }
-  runQuery().then(function() {
-    $scope.$apply();
-  }, function() {
-    if(userProfile == null) {
-      var Profile = new Parse.Object.extend("Profile");
-      userProfile = new Profile();
-      userProfile.set("userId", Parse.User.current());
-    }
+
+  Parse.User.current().fetch().then(function(user) {
+    $scope.profile.email = user.getEmail();
+    runQuery().then(function() {
+      $scope.$apply();
+    }, function() {
+      if(userProfile == null) {
+        var Profile = new Parse.Object.extend("Profile");
+        userProfile = new Profile();
+        userProfile.set("userId", Parse.User.current());
+      }
+    });
   });
 });
