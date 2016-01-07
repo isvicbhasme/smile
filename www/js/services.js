@@ -195,25 +195,29 @@ servicesModule.factory('ConnectivityService', function($rootScope, $cordovaNetwo
       title: 'Internet disconnected',
       template: 'Please connect connect to internet before using this app.'
     }).then(function() {
-      ionic.Platform.exitApp();
+      if(isOffline()) {
+        ionic.Platform.exitApp();
+      }
     });
+  }
+  var isOnline = function(){
+    if(ionic.Platform.isWebView()){
+      return $cordovaNetwork.isOnline();    
+    } else {
+      return navigator.onLine;
+    }
+  }
+  var isOffline = function(){
+    if(ionic.Platform.isWebView()){
+      return !$cordovaNetwork.isOnline();    
+    } else {
+      return !navigator.onLine;
+    }
   }
 
   return {
-    isOnline: function(){
-      if(ionic.Platform.isWebView()){
-        return $cordovaNetwork.isOnline();    
-      } else {
-        return navigator.onLine;
-      }
-    },
-    isOffline: function(){
-      if(ionic.Platform.isWebView()){
-        return !$cordovaNetwork.isOnline();    
-      } else {
-        return !navigator.onLine;
-      }
-    },
+    isOnline: isOnline,
+    isOffline: isOffline,
     startWatching: function(){
       if(ionic.Platform.isWebView()){
 
