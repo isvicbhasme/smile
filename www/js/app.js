@@ -5,10 +5,9 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.controllers' is found in controllers.js
 
-angular.module('app', ['ionic', 'app.controllers', 'ngMessages', 'ionic-datepicker'])
+angular.module('app', ['ionic', 'app.controllers', 'ngMessages', 'ionic-datepicker', 'ngCordova'])
 
-.run(function($ionicPlatform) {
-  Parse.initialize("RAxSwXAaCAnU0gDMerYZyzlVUYG1XJPTjnf1SxkT", "i3LCpXVDwWIgUlqcEBdrncGQeBKuT9HG9lWuDrK4");
+.run(function($ionicPlatform, ConnectivityService) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -21,7 +20,10 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages', 'ionic-datepick
       // org.apache.cordova.statusbar required
       StatusBar.styleDefault();
     }
+  ConnectivityService.startWatching();
+  console.log("Online state: "+ConnectivityService.isOnline());
   });
+  Parse.initialize("RAxSwXAaCAnU0gDMerYZyzlVUYG1XJPTjnf1SxkT", "i3LCpXVDwWIgUlqcEBdrncGQeBKuT9HG9lWuDrK4");
 })
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
