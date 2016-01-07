@@ -7,7 +7,8 @@
   	<div class="list">
 
 	  	<div class="item item-avatar">
-		    <img src="img/gentleman.png"></img>
+		    <img src="img/gentleman.png" ng-if="profile.isFemale == null || profile.isFemale == false"></img>
+		    <img src="img/lady.png" ng-if="profile.isFemale != null && profile.isFemale == true"></img>
 		    <h2 ng-if="profile.firstName.length > 0 || profile.lastName.length > 0">{{profile.firstName}} {{profile.lastName}}</h2>
 		    <span ng-if="profile.firstName.length == 0 && profile.lastName.length == 0" class="royal">No name</span>
 		    <p>{{profile.birthdate | date:'MMMM/dd/yyyy'}}</p>
@@ -40,6 +41,19 @@
 	      	</div>
 	    	<button ng-if="editable.lastName" class="button button-icon icon ion-checkmark-round" ng-click="saveLastName()"></button>
 	    	<button ng-if="!editable.lastName" class="button button-icon icon ion-edit" ng-click="editable.lastName=true"></button>
+	    </div>
+
+	    <!-- Gender -->
+	    <div class="item item-icon-left item-toggle">
+	    	<i class="icon ion-android-people" ></i>
+	    	<span ng-if="profile.isFemale == null || profile.isFemale == false">Male</span>
+	    	<span ng-if="profile.isFemale != null && profile.isFemale == true">Female</span>
+	    	<label class="toggle toggle-assertive">
+		    	<input type="checkbox" ng-model="profile.isFemale" ng-change="saveGender()">
+		    	<div class="track">
+			    	<div class="handle"></div>
+			    </div>
+		    </label>
 	    </div>
 	  	
 		<form name="mobileForm" novalidate>

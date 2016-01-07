@@ -723,6 +723,13 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceCon
     });
   }
 
+  $scope.saveGender = function() {
+    if(userProfile.get("isFemale") != $scope.profile.isFemale) {
+      userProfile.set("isFemale", $scope.profile.isFemale);
+      userProfile.save();
+    }
+  }
+
   var resetPasswordVarsInScope = function() {
     $scope.profile.oldPwd = "";
     $scope.profile.newPwd = "";
@@ -734,7 +741,7 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceCon
     firstName: "",
     lastName: "",
     mobileNumber: "",
-    isMale: true,
+    isFemale: false,
     oldPwd: "",
     newPwd: "",
     confPwd: "",
@@ -757,7 +764,7 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceCon
           $scope.profile.firstName = results[0].get("firstName");
           $scope.profile.lastName = results[0].get("lastName");
           $scope.profile.mobileNumber = results[0].get("mobileNumber");
-          $scope.profile.isMale = results[0].get("isMale");
+          $scope.profile.isFemale = results[0].get("isFemale");
           $scope.profile.birthdate = results[0].get("birthdate");
           userProfile = results[0];
           resolve();
