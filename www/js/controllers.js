@@ -71,6 +71,7 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
   $scope.data = {
     from: currentDate,
     to: currentDate,
+    rangeSelection: false,
     minDate: new Date(2000, 1, 1),
     maxDate: new Date(2100, 12, 31)
   };
@@ -97,6 +98,9 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
     if(!$scope.data.reason || $scope.data.reason.length < 1) {
       result.message = "Oops! Please provide a reason for your leave";
       return result;
+    }
+    if($scope.data.rangeSelection) {
+      $scope.data.to = $scope.data.from;
     }
     if($scope.data.from.getTime() < currentDate || $scope.data.to.getTime() < currentDate) {
       result.message = "Oops! Sorry you cannot apply leave for a past date";

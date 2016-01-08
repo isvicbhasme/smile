@@ -5,20 +5,6 @@
     </script>
   	<div class="list">
 	    <form name="leaveForm" novalidate>
-	    	<!-- From date -->
-		    <label class="item ">
-		    	<ionic-datepicker date="data.from" min="minDate" max="maxDate" callback="fromDateCallback">
-				    From date: <button class="button button-block button-balanced rounded-corner"> {{ data.from | date:'MMMM/dd/yyyy' }} </button>
-				</ionic-datepicker>
-		    </label>
-
-		    <!-- To date -->
-		    <label class="item ">
-		    	<ionic-datepicker date="data.to" min="minDate" max="maxDate" callback="toDateCallback">
-				    To date: <button class="button button-block button-balanced rounded-corner"> {{ data.to | date:'MMMM/dd/yyyy' }} </button>
-				</ionic-datepicker>
-		    </label>
-
 		    <!-- Description -->
 	    	<label class="item item-input" ng-class="{ 'has-errors' : leaveForm.desc.$touched && leaveForm.desc.$invalid }">
 				<input type="text" name="desc" ng-model="data.reason" placeholder="Sad, but why can't you make it?" ng-required="true" />
@@ -26,6 +12,24 @@
 	    	<div ng-messages="leaveForm.desc.$error" ng-show="leaveForm.desc.$touched" role="alert">
 	          <div ng-messages-include="error-messages"></div>
 	        </div>
+
+	    	<!-- From date -->
+		    <label class="item ">
+		    	<ionic-datepicker date="data.from" min="minDate" max="maxDate" callback="fromDateCallback">
+				    <center>From date</center>
+				    <button class="button button-block button-balanced rounded-corner"> {{ data.from | date:'MMMM/dd/yyyy' }} </button>
+				</ionic-datepicker>
+		    </label>
+
+	    	<ion-checkbox ng-model="data.rangeSelection">More than 1 day?</ion-checkbox>
+
+		    <!-- To date -->
+		    <label class="item" ng-if="data.rangeSelection">
+		    	<ionic-datepicker date="data.to" min="minDate" max="maxDate" callback="toDateCallback">
+				    <center>To date</center>
+				    <button class="button button-block button-balanced rounded-corner"> {{ data.to | date:'MMMM/dd/yyyy' }} </button>
+				</ionic-datepicker>
+		    </label>
 
 	        <!-- Submit -->
 	        <label class="item">
