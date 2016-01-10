@@ -160,6 +160,13 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
     return;
   }
 
+  var leavesCount = 0;
+  var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
+  leavesQuery.include("inspectedBy");
+  leavesQuery.limit(5);
+  leavesQuery.ascending("createdAt");
+  leavesQuery.equalTo("userId", Parse.User.current());
+
   var refresh = function() {
     runQuery().then(function() {
       $scope.$broadcast('scroll.refreshComplete');
@@ -203,18 +210,30 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
 
   $scope.leaves = {
     list: [],
+    initialized: false,
+    moreItemsAvailable: false,
     confirmRevoke: confirmLeaveRevoke,
     refresh: refresh
   };
 
+  $scope.loadMore = function() {
+    if($scope.leaves.initialized) {
+      var displayedLeavesCount = $scope.leaves.list.length;
+      leavesQuery.skip(displayedLeavesCount);
+      if(displayedLeavesCount < leavesCount) {
+        runQuery().then(function() {
+          $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+      } else {
+        $scope.leaves.moreItemsAvailable = false;
+      }
+    }
+  };
+
   var runQuery = function() {
     return new Promise(function(resolve, reject) {
-      var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
-      leavesQuery.include("inspectedBy");
-      leavesQuery.equalTo("userId", Parse.User.current());
       leavesQuery.find().then(function(results) {
         $scope.leaves.count = results.length;
-        var leavesList = [];
         results.forEach(function(dbData, index) {
           var leave = {};
           leave.id = dbData.id;
@@ -235,16 +254,26 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
             leave.inspectedBy = dbData.get("inspectedBy").get("username");
             leave.inspectedOn = dbData.get("inspectedOn");
           }
-          leavesList.push(leave);
+          $scope.leaves.list.push(leave);
         });
-        $scope.leaves.list = leavesList;
         resolve();
       });
     });
   }
 
-  runQuery().then(function() {
-    $scope.$apply();
+  leavesQuery.count().then(function(count) {
+    leavesCount = count;
+      if($scope.leaves.list.length < leavesCount) {
+        $scope.leaves.moreItemsAvailable = true;
+        runQuery().then(function() {
+          $scope.leaves.initialized = true;
+          $scope.$apply();
+        });
+      } else {
+        $scope.leaves.initialized = true;
+        $scope.leaves.moreItemsAvailable = false;
+        $scope.$apply();
+      }
   });
 });
 

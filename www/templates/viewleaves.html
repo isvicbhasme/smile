@@ -31,5 +31,7 @@
 	</div>
 
 </div>
+<ion-infinite-scroll on-infinite="loadMore()" distance="1%" ng-if="leaves.initialized && leaves.moreItemsAvailable">
+</ion-infinite-scroll>
 </ion-content>
 </ion-view>
