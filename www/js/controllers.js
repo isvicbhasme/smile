@@ -225,6 +225,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
           $scope.$broadcast('scroll.infiniteScrollComplete');
         });
       } else {
+        $scope.$broadcast('scroll.infiniteScrollComplete');
         $scope.leaves.moreItemsAvailable = false;
       }
     }
@@ -263,17 +264,17 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
 
   leavesQuery.count().then(function(count) {
     leavesCount = count;
-      if($scope.leaves.list.length < leavesCount) {
-        $scope.leaves.moreItemsAvailable = true;
-        runQuery().then(function() {
-          $scope.leaves.initialized = true;
-          $scope.$apply();
-        });
-      } else {
+    if($scope.leaves.list.length < leavesCount) {
+      $scope.leaves.moreItemsAvailable = true;
+      runQuery().then(function() {
         $scope.leaves.initialized = true;
-        $scope.leaves.moreItemsAvailable = false;
         $scope.$apply();
-      }
+      });
+    } else {
+      $scope.leaves.initialized = true;
+      $scope.leaves.moreItemsAvailable = false;
+      $scope.$apply();
+    }
   });
 });
 
@@ -285,7 +286,12 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
 
   var currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
+  var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
+  leavesQuery.include("inspectedBy");
+  leavesQuery.notEqualTo("userId", Parse.User.current());
+  leavesQuery.limit(3);
   var queryResults = [];
+  var leavesCount = 0;
 
   var confirmAndApprove = function(leave){
     $ionicPopup.confirm({
@@ -340,9 +346,9 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
   }
 
   var refresh = function() {
-    runQuery().then(function() {
+    $scope.filteredLeaves.list = [];
+    resetAndRunQuery().then(function() {
       $scope.$broadcast('scroll.refreshComplete');
-      $scope.$apply();
     });
   }
 
@@ -350,7 +356,9 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
     list: [],
     approve: confirmAndApprove,
     reject: confirmAndReject,
-    refresh: refresh
+    refresh: refresh,
+    moreItemsAvailable: false,
+    isInitialized: false
   };
 
   var queryParams = {
@@ -374,18 +382,17 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
       }
   }
 
+  var applyQueryParamsToParseQuery = function() {
+    leavesQuery.greaterThanOrEqualTo("leaveFrom", queryParams.from);
+    if(queryParams.to != null) {
+      leavesQuery.lessThanOrEqualTo("leaveTo", queryParams.to);
+    }
+  }
 
   var runQuery = function() {
     return new Promise(function(resolve, reject) {
-      var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
-      leavesQuery.include("inspectedBy");
-      leavesQuery.notEqualTo("userId", Parse.User.current());
-      leavesQuery.greaterThanOrEqualTo("leaveFrom", queryParams.from);
-      if(queryParams.to != null) {
-        leavesQuery.lessThanOrEqualTo("leaveTo", queryParams.to);
-      }
+      applyQueryParamsToParseQuery();
       leavesQuery.find().then(function(results) {
-        var leaves = [];
         results.forEach(function(dbData, index) {
           var leave = {};
           leave.id = dbData.id;
@@ -409,9 +416,8 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
             leave.inspectedBy = dbData.get("inspectedBy").get("username");
             leave.inspectedOn = dbData.get("inspectedOn");
           }
-          leaves.push(leave);
+          $scope.filteredLeaves.list.push(leave);
         });
-        $scope.filteredLeaves.list = leaves;
         queryResults = results;
         resolve();
       });
@@ -462,11 +468,12 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
     else {
       if( !BasicApiService.isSameDate(queryParams.from, $scope.filterParams.from)
         || !BasicApiService.isSameDate(queryParams.to, $scope.filterParams.to)) {
+        $scope.filteredLeaves.list = [];
         queryParams.from = $scope.filterParams.from;
         queryParams.to = $scope.filterParams.to;
-        runQuery().then(function() {
-          $scope.$apply();
-        });
+        $scope.filteredLeaves.isInitialized = false;
+        $scope.filteredLeaves.moreItemsAvailable = false;
+        resetAndRunQuery();
       }
       $scope.modal.hide();
     }
@@ -476,9 +483,44 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
     $scope.modal.remove();
   });
 
-  runQuery().then(function() {
-    $scope.$apply();
-  });
+  $scope.loadMore = function() {
+    if($scope.filteredLeaves.isInitialized) {
+      var displayedLeavesCount = $scope.filteredLeaves.list.length;
+      leavesQuery.skip(displayedLeavesCount);
+      if(displayedLeavesCount < leavesCount) {
+        runQuery().then(function() {
+          $scope.$broadcast('scroll.infiniteScrollComplete');
+        });
+      } else {
+        $scope.$broadcast('scroll.infiniteScrollComplete');
+        $scope.filteredLeaves.moreItemsAvailable = false;
+      }
+    }
+  };
+
+  var resetAndRunQuery = function() {
+    return new Promise(function(resolve, reject){
+      applyQueryParamsToParseQuery();
+      leavesQuery.skip(0);
+      leavesQuery.count().then(function(count) {
+        leavesCount = count;
+        if(leavesCount > 0) {
+          $scope.filteredLeaves.moreItemsAvailable = true;
+          runQuery().then(function() {
+            $scope.filteredLeaves.isInitialized = true;
+            $scope.$apply();
+            resolve();
+          });
+        } else {
+          $scope.filteredLeaves.isInitialized = true;
+          $scope.filteredLeaves.moreItemsAvailable = false;
+          $scope.$apply();
+        }
+      });
+    });
+  }
+
+  resetAndRunQuery();
 });
 
 appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService){

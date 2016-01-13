@@ -42,5 +42,7 @@
 		  	<p class="button button-clear button-assertive button-small" style="max-height:70px" ng-if="leave.isRejected">Rejected on </br>{{leave.inspectedOn | date:'mediumDate'}}</p>
 	  	</div>
   	</div>
+  	<ion-infinite-scroll on-infinite="loadMore()" distance="1%" ng-if="filteredLeaves.isInitialized && filteredLeaves.moreItemsAvailable">
+	</ion-infinite-scroll>
   </ion-content>
 </ion-view>
