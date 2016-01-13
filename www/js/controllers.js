@@ -168,9 +168,10 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
   leavesQuery.equalTo("userId", Parse.User.current());
 
   var refresh = function() {
-    runQuery().then(function() {
+    $scope.leaves.list = [];
+    leavesQuery.skip(0);
+    resetAndRunQuery().then(function() {
       $scope.$broadcast('scroll.refreshComplete');
-      $scope.$apply();
     });
   }
 
@@ -262,20 +263,27 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
     });
   }
 
-  leavesQuery.count().then(function(count) {
-    leavesCount = count;
-    if($scope.leaves.list.length < leavesCount) {
-      $scope.leaves.moreItemsAvailable = true;
-      runQuery().then(function() {
-        $scope.leaves.initialized = true;
-        $scope.$apply();
+  var resetAndRunQuery = function() {
+    return new Promise(function(resolve, reject) {
+      leavesQuery.count().then(function(count) {
+        leavesCount = count;
+        if($scope.leaves.list.length < leavesCount) {
+          $scope.leaves.moreItemsAvailable = true;
+          runQuery().then(function() {
+            $scope.leaves.initialized = true;
+            $scope.$apply();
+            resolve();
+          });
+        } else {
+          $scope.leaves.initialized = true;
+          $scope.leaves.moreItemsAvailable = false;
+          $scope.$apply();
+        }
       });
-    } else {
-      $scope.leaves.initialized = true;
-      $scope.leaves.moreItemsAvailable = false;
-      $scope.$apply();
-    }
-  });
+    });
+  }
+
+  resetAndRunQuery();
 });
 
 appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPopup, AuthService, BasicApiService) {
