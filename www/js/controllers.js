@@ -154,7 +154,7 @@ appModule.controller('LeaveApplyCtrl', function($scope, $state, AuthService, $io
   }
 });
 
-appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, BasicApiService, $ionicPopup, $rootScope) {
+appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, BasicApiService, $ionicPopup, $rootScope, CommonConstService) {
   if(!AuthService.isAuthenticated()) {
     $state.go('login');
     return;
@@ -163,7 +163,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
   var leavesCount = 0;
   var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
   leavesQuery.include("inspectedBy");
-  leavesQuery.limit(5);
+  leavesQuery.limit(CommonConstService.QUERY_RESULT_LIMIT);
   leavesQuery.ascending("createdAt");
   leavesQuery.equalTo("userId", Parse.User.current());
 
@@ -286,7 +286,7 @@ appModule.controller('LeavesViewCtrl', function($scope, $state, AuthService, Bas
   resetAndRunQuery();
 });
 
-appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPopup, AuthService, BasicApiService) {
+appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPopup, AuthService, BasicApiService, CommonConstService) {
   if(!AuthService.isAuthenticated()) {
     $state.go('login');
     return;
@@ -296,8 +296,9 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
   currentDate.setHours(0, 0, 0, 0);
   var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
   leavesQuery.include("inspectedBy");
+  leavesQuery.ascending("createdAt");
   leavesQuery.notEqualTo("userId", Parse.User.current());
-  leavesQuery.limit(3);
+  leavesQuery.limit(CommonConstService.QUERY_RESULT_LIMIT);
   var queryResults = [];
   var leavesCount = 0;
 

@@ -188,6 +188,12 @@ servicesModule.factory('BasicApiService', function() {
   }
 });
 
+servicesModule.factory('CommonConstService', function(){
+  return {
+    QUERY_RESULT_LIMIT: 5
+  }
+});
+
 servicesModule.factory('ConnectivityService', function($rootScope, $cordovaNetwork, $ionicPopup) {
 
   var alertAndExit = function() {
