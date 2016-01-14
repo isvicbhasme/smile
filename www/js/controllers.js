@@ -841,16 +841,17 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceCon
   
   var runQuery = function() {
     return new Promise(function(resolve, reject) {
-      var profileQuery = new Parse.Query(Parse.Object.extend("Profile"));
+      var profileQuery = new Parse.Query(Parse.Object.extend("User"));
       profileQuery.equalTo("userId", Parse.User.current());
+      profileQuery.include("profileId");
       profileQuery.find().then(function(results) {
         if(results.length > 0) {
-          $scope.profile.firstName = results[0].get("firstName");
-          $scope.profile.lastName = results[0].get("lastName");
-          $scope.profile.mobileNumber = results[0].get("mobileNumber");
-          $scope.profile.isFemale = results[0].get("isFemale");
-          $scope.profile.birthdate = results[0].get("birthdate");
-          userProfile = results[0];
+          $scope.profile.firstName = results[0].get("profileId").get("firstName");
+          $scope.profile.lastName = results[0].get("profileId").get("lastName");
+          $scope.profile.mobileNumber = results[0].get("profileId").get("mobileNumber");
+          $scope.profile.isFemale = results[0].get("profileId").get("isFemale");
+          $scope.profile.birthdate = results[0].get("profileId").get("birthdate");
+          userProfile = results[0].get("profileId");
           resolve();
         } else {
           reject();
@@ -869,7 +870,7 @@ appModule.controller('ProfileCtrl', function($scope, AuthService, AuthServiceCon
       if(userProfile == null) {
         var Profile = new Parse.Object.extend("Profile");
         userProfile = new Profile();
-        userProfile.set("userId", Parse.User.current());
+        Parse.User.current().set("profileId", userProfile).save();
         $scope.$apply();
       }
     });
