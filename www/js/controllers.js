@@ -307,7 +307,7 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
   var currentDate = new Date();
   currentDate.setHours(0, 0, 0, 0);
   var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
-  leavesQuery.include("inspectedBy");
+  leavesQuery.include("inspectedBy.profileId");
   leavesQuery.ascending("createdAt");
   leavesQuery.notEqualTo("userId", Parse.User.current());
   leavesQuery.limit(CommonConstService.QUERY_RESULT_LIMIT);
@@ -434,7 +434,19 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
           }
           leave.isApproved = dbData.get("isApproved");
           if(leave.isApproved || leave.isRejected) {
-            leave.inspectedBy = dbData.get("inspectedBy").get("username");
+            var inspector = "";
+            if(dbData.get("inspectedBy").get("profileId") != null) {
+              if(dbData.get("inspectedBy").get("profileId").get("firstName") != null) {
+                inspector = dbData.get("inspectedBy").get("profileId").get("firstName");
+              }
+              if(dbData.get("inspectedBy").get("profileId").get("lastName") != null) {
+                inspector = inspector + " " + dbData.get("inspectedBy").get("profileId").get("lastName");
+              }
+              leave.inspectedBy = inspector.trim();
+            }
+            if(inspector.length == 0) {
+              leave.inspectedBy = dbData.get("inspectedBy").get("username");
+            }
             leave.inspectedOn = dbData.get("inspectedOn");
           }
           $scope.filteredLeaves.list.push(leave);
