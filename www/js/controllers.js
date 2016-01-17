@@ -569,7 +569,7 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
   resetAndRunQuery();
 });
 
-appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthService, AuthServiceConstants, MenuListService, HistoryService){
+appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, $ionicModal, AuthService, AuthServiceConstants, MenuListService, HistoryService){
   $scope.loginData = {
     username: '',
     minUsernameLength : AuthServiceConstants.minUsernameLength,
@@ -578,10 +578,14 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
     maxPasswordLength : AuthServiceConstants.maxPasswordLength
   };
 
+  $scope.forgotPwd = {
+    email: ''
+  }
+
   var isLoggedIn = AuthService.isAuthenticated();
   if(isLoggedIn) {
     HistoryService.clearAllAndDontStoreThisPage();
-    $state.go('app.articles');
+    $state.go('app.profile');
   }
 
   function isFormValid() {
@@ -622,6 +626,45 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
     });
   }
 
+  $ionicModal.fromTemplateUrl('templates/forgotpassword.html', {
+    scope: $scope
+  }).then(function(modal) {
+    $scope.modal = modal;
+  });
+
+  $scope.showPwdResetModal = function() {
+    $scope.modal.show()
+  }
+
+  $scope.cancelPwdRequest = function() {
+    $scope.modal.hide();
+  }
+
+  $scope.requestPwdReset = function() {
+    if($scope.forgotPwd.email == null || $scope.forgotPwd.email.trim().length == 0) {
+      $ionicPopup.alert({
+        title: "Form Validation",
+        template: "Please enter a valid email address."
+      });
+      return;
+    }
+      Parse.User.requestPasswordReset($scope.forgotPwd.email, {
+      success: function() {
+        $ionicPopup.alert({
+          title: "Password reset",
+          template: "Please check your email for password reset procedure."
+        });
+      },
+      error: function(error) {
+        $ionicPopup.alert({
+          title: "Form Validation",
+          template: "Error: "+error.message
+        });
+      }
+    });
+    $scope.modal.hide();
+  }
+
   $scope.doLogin = function() {
     var validationResult = isFormValid();
     if(!validationResult.valid)
@@ -637,11 +680,11 @@ appModule.controller('LoginCtrl', function($scope, $state, $ionicPopup, AuthServ
       HistoryService.clearAllAndDontStoreThisPage();
       AuthService.clearUserRole();
       MenuListService.clearMenuList();
-      $state.go('app.articles');
+      $state.go('app.profile');
     },function(error) {
       $ionicPopup.alert({
         title: "Login Failure",
-        template: "Error: " + error.code + " " + error.message
+        template: "Error: " + error.message
       });
       return;
     });
