@@ -16,8 +16,8 @@
 			<i ng-if="leave.isApproved && leave.isRevoked == false" class="icon ion-checkmark-round approved-color"> </i>
 			<i ng-if="leave.isRejected && leave.isRevoked == false" class="icon ion-close-round rejected-color"> </i>
 			<i ng-if="(leave.isRejected == false && leave.isApproved == false) || leave.isRevoked" class="icon ion-alert waiting-color"> </i>
-			<h3 ng-if="leave.to != null">{{leave.from | date:'mediumDate'}} to {{leave.to | date:'mediumDate'}}</h3>
-			<h3 ng-if="leave.to == null">{{leave.from | date:'mediumDate'}}</h3>
+			<h3 ng-if="leave.applicant != null">{{leave.applicant}}</h3>
+			<h3 ng-if="leave.applicant == null">Nameless creature!</h3>
 			<p ng-if="leave.isApproved && !leave.isRevoked">Approved by {{leave.inspectedBy}}</p>
 			<p ng-if="leave.isRejected && !leave.isRevoked">Rejected by {{leave.inspectedBy}}</p>
 			<p ng-if="leave.isRevoked">Revoked on {{leave.revokedOn | date:'mediumDate'}}</p>
@@ -25,6 +25,8 @@
 		</div>
 
 		<div class="item item-body">
+			<p ng-if="leave.to != null">{{leave.from | date:'mediumDate'}} to {{leave.to | date:'mediumDate'}}</p>
+			<p ng-if="leave.to == null">{{leave.from | date:'mediumDate'}}</p>
 			<p>
 				{{leave.reason}}
 			</p>

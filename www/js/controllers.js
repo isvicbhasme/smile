@@ -308,6 +308,7 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
   currentDate.setHours(0, 0, 0, 0);
   var leavesQuery = new Parse.Query(Parse.Object.extend("Leave"));
   leavesQuery.include("inspectedBy.profileId");
+  leavesQuery.include("userId.profileId");
   leavesQuery.ascending("createdAt");
   leavesQuery.notEqualTo("userId", Parse.User.current());
   leavesQuery.limit(CommonConstService.QUERY_RESULT_LIMIT);
@@ -425,6 +426,18 @@ appModule.controller('LeavesApproveCtrl', function($scope, $ionicModal, $ionicPo
           }
           if(queryParams.to == null || dbData.get("leaveTo").getTime() > queryParams.to.getTime()) {
             queryParams.to = dbData.get("leaveTo");
+          }
+          var applicant = "";
+          if(dbData.get("userId").get("profileId") != null) {
+            if(dbData.get("userId").get("profileId").get("firstName") != null) {
+              leave.applicant = dbData.get("userId").get("profileId").get("firstName");
+            }
+            if(dbData.get("userId").get("profileId").get("lastName") != null) {
+              leave.applicant = leave.applicant + " " + dbData.get("userId").get("profileId").get("lastName");
+            }
+          }
+          if(leave.applicant.trim().length == 0) {
+            leave.applicant = dbData.get("userId").get("username");
           }
           leave.isRejected = dbData.get("isRejected");
           leave.isRevoked = dbData.get("isRevoked");
