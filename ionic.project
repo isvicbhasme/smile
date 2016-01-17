@@ -1,5 +1,5 @@
 {
-  "name": "smile",
+  "name": "Greeters",
   "app_id": "",
   "gulpStartupTasks": [
     "sass",

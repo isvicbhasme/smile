@@ -1,7 +1,7 @@
 {
-  "name": "smile",
-  "version": "1.0.0",
-  "description": "smile: An Ionic project",
+  "name": "Greeters",
+  "version": "0.1.0",
+  "description": "Greeters: An Ionic project",
   "dependencies": {
     "datepicker-for-ionic": "^1.1.2",
     "gulp": "^3.5.6",
