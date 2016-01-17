@@ -112,12 +112,6 @@ servicesModule.factory('MenuListService', function(AuthService, AuthServiceConst
             icon: 'ion-plus-round'
           },
           {
-            name: 'Articles',
-            isLink: true,
-            link: '#/app/articles',
-            icon: 'ion-information'
-          },
-          {
             name: 'Profile',
             isLink: true,
             link: '#/app/profile',
