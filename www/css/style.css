@@ -37,3 +37,7 @@ h4, h5, h6 {
 .col {
 	border: 1px;
 }
+
+.underline {
+	text-decoration: underline;
+}

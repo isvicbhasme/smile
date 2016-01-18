@@ -1,5 +1,5 @@
 <ion-view view-title="Login">
-  <ion-header-bar class="bar-positive item-icon-left">
+  <ion-header-bar class="bar-energized item-icon-left">
     <i class="icon ion-log-in"> </i>
     <h1 class="title">Login</h1>
   </ion-header-bar>
@@ -29,12 +29,25 @@
 
         <!-- Submit -->
         <label class="item">
-          <button class="button button-block button-full button-balanced rounded-corner" ng-disabled="loginForm.$invalid" type="submit">Log in</button>
+          <button class="button button-block button-full button-energized rounded-corner" ng-disabled="loginForm.$invalid" type="submit">Log me in</button>
         </label>
       </div>
     </form>
-    <a class="button button-clear button-dark icon-left ion-person-add" ng-href="#/register">Register</a>
-    </br>
-    <button class="button button-clear button-dark icon-left ion-sad" ng-click="showPwdResetModal()">Forgot password</button>
+    <div class="row">
+      <div class="col col-50 buttons" style="text-align:center; width:50%;" >
+        <a class="button button-clear button-large button-energized icon ion-person-add" ng-href="#/register"></a>
+      </div>
+      <div class="col col-50 buttons" style="text-align:center; width:50%;" ng-click="showPwdResetModal()">
+        <button class="button button-clear button-large button-assertive icon ion-sad"></button>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col col-50 balanced" style="text-align:center; width:50%;" ng-href="#/register">
+        Register
+      </div>
+      <div class="col col-50 balanced" style="text-align:center; width:50%;" ng-click="showPwdResetModal()">
+        Forgot</br>Password
+      </div>
+    </div>
   </ion-content>
 </ion-view>

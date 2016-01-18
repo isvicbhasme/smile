@@ -1,5 +1,6 @@
 <div class="modal">
-  <ion-header-bar>
+  <ion-header-bar align-title="center" class="bar-energized">
+    <button class="button button-icon ion-funnel"></button>
     <h1 class="title">Filters</h1>
   </ion-header-bar>
   <ion-content>
@@ -7,20 +8,22 @@
       <!-- From date -->
         <label class="item ">
           <ionic-datepicker date="filterParams.from" min="minDate" max="maxDate" callback="filterParams.fromDateCallback">
-            From date: <button class="button button-block button-balanced rounded-corner"> {{ filterParams.from | date:'MMMM/dd/yyyy' }} </button>
+            <center>From date</center>
+            <button class="button button-block button-balanced rounded-corner"> {{ filterParams.from | date:'MMMM/dd/yyyy' }} </button>
         </ionic-datepicker>
         </label>
 
         <!-- To date -->
         <label class="item ">
           <ionic-datepicker date="filterParams.to" min="minDate" max="maxDate" callback="filterParams.toDateCallback">
-            To date: <button class="button button-block button-balanced rounded-corner"> {{ filterParams.to | date:'MMMM/dd/yyyy' }} </button>
+            <center>To date</center>
+            <button class="button button-block button-balanced rounded-corner"> {{ filterParams.to | date:'MMMM/dd/yyyy' }} </button>
         </ionic-datepicker>
         </label>
     </div>
     <div class="button-bar">
-      <a class="button button-assertive rounded-corner button-clear" style="text-decoration: underline;" ng-click="cancelFilters()">Cancel</a>
-      <a class="button button-balanced rounded-corner button-clear" style="text-decoration: underline;" ng-click="applyFilters()">Apply</a>
+      <button class="button button-energized rounded-corner button-clear underline" ng-click="applyFilters()">Apply</button>
+      <button class="button button-assertive rounded-corner button-clear underline" ng-click="cancelFilters()">Cancel</button>
     </div>
   </ion-content>
 </div>

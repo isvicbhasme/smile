@@ -10,7 +10,7 @@
 		    <img src="img/gentleman.png" ng-if="profile.isFemale == null || profile.isFemale == false"></img>
 		    <img src="img/lady.png" ng-if="profile.isFemale != null && profile.isFemale == true"></img>
 		    <h2 ng-if="profile.firstName.length > 0 || profile.lastName.length > 0">{{profile.firstName}} {{profile.lastName}}</h2>
-		    <span ng-if="profile.firstName.length == 0 && profile.lastName.length == 0" class="royal">No name</span>
+		    <span ng-if="profile.firstName.length == 0 && profile.lastName.length == 0" class="balanced">No name</span>
 		    <p>{{profile.birthdate | date:'MMMM/dd/yyyy'}}</p>
 	  	</div>
 	  	
@@ -18,7 +18,7 @@
 		  	<!-- Firstname -->
 		    <div class="item item-icon-left item-icon-right">
 		    	<i class="icon ion-card" ></i>
-		    	<span ng-if="!editable.firstName && (profile.firstName == null || profile.firstName.length == 0)" class="royal">Enter first name here</span>
+		    	<span ng-if="!editable.firstName && (profile.firstName == null || profile.firstName.length == 0)" class="balanced">Enter first name here</span>
 		    	<span ng-if="!editable.firstName && profile.firstName.length > 0">{{profile.firstName}}</span>
 		    	<div class="item-input" ng-if="editable.firstName">
 		      		<input type="text" placeholder="First name" name="firstName" ng-model="profile.firstName" style="border-bottom: 1px solid black;" ng-required="true"/>
@@ -34,7 +34,7 @@
 	  	<!-- Lastname -->
 	    <div class="item item-icon-left item-icon-right">
 	    	<i class="icon ion-ribbon-b" ></i>
-	    	<span ng-if="!editable.lastName && (profile.lastName == null || profile.lastName.length == 0)" class="royal">Enter last name here</span>
+	    	<span ng-if="!editable.lastName && (profile.lastName == null || profile.lastName.length == 0)" class="balanced">Enter last name here</span>
 	    	<span ng-if="!editable.lastName && profile.lastName && profile.lastName.length > 0">{{profile.lastName}}</span>
 	    	<div class="item-input" ng-if="editable.lastName">
 	      		<input type="text" placeholder="Last name" name="lastName" ng-model="profile.lastName" style="border-bottom: 1px solid black;"/>
@@ -60,7 +60,7 @@
 		  	<!-- Mobile Number -->
 		    <div class="item item-icon-left item-icon-right">
 		    	<i class="icon ion-android-call" ></i>
-		    	<span ng-if="!editable.mobileNumber && (profile.mobileNumber == null || profile.mobileNumber.length == 0)" class="royal">Enter mobile num here</span>
+		    	<span ng-if="!editable.mobileNumber && (profile.mobileNumber == null || profile.mobileNumber.length == 0)" class="balanced">Enter mobile num here</span>
 		    	<span ng-if="!editable.mobileNumber && profile.mobileNumber != null && profile.mobileNumber > 0">{{profile.mobileNumber}}</span>
 		    	<div class="item-input" ng-if="editable.mobileNumber">
 		      		<input type="text" placeholder="Mobile number" name="mobNum" ng-model="profile.mobileNumber" ng-pattern="/^[+]?[0-9]+$/" style="border-bottom: 1px solid black;"/>
@@ -78,7 +78,7 @@
 		  	<!-- E-Mail -->
 		    <div class="item item-icon-left item-icon-right">
 		    	<i class="icon ion-email" ></i>
-		    	<span ng-if="!editable.email && (profile.email == null || profile.email.length == 0)" class="royal">Enter e-mail here</span>
+		    	<span ng-if="!editable.email && (profile.email == null || profile.email.length == 0)" class="balanced">Enter e-mail here</span>
 		    	<span ng-if="!editable.email && profile.email && profile.email.length > 0">{{profile.email}}</span>
 		    	<div class="item-input" ng-if="editable.email">
 		      		<input type="email" placeholder="E-mail" name="emailInput" ng-model="profile.email" ng-required="true" style="border-bottom: 1px solid black;"/>
@@ -114,7 +114,7 @@
 		          <div ng-messages-include="error-messages"></div>
 		          <div class="error-msg" ng-message="pattern">This should match your new password</div>
 		        </div>
-		        <button class="button button-royal button-small" style="margin-top:20px;" ng-disabled="passwordForm.$invalid || profile.oldPwd.length === 0" ng-click="savePassword()">Save password</button>
+		        <button class="button button-energized button-small" style="margin-top:20px;" ng-disabled="passwordForm.$invalid || profile.oldPwd.length === 0" ng-click="savePassword()">Save password</button>
 			  </div>
 			</div>
 		</form>

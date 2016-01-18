@@ -15,14 +15,13 @@ $royal:                           #886aea !default;
 $dark:                            #444 !default;
 */
 
-$positive:                        #1F7FA1 !default; //dark blue
-$balanced:                        #16D5F7 !default; //light blue
-$energized:                       #FEF177 !default; //yellow
-$assertive:                       #FF3364 !default; //dark pink
-$royal:                           #777    !default; //dark blue
-$dark:                            #444    !default; //black
+$light:                           #ffffff !default; // white
+$stable:                          #CFCFC1 !default; // light grey
+$balanced:                        #858579 !default; // Dark grey
+$energized:                       #536499 !default; // Purple
+$dark:                            #101412 !default; // Black
 
-$button-energized-text:           #777 !default;
+$button-energized-text:           #ffffff !default; //white
 
 // The path for our ionicons font files, relative to the built CSS in www/css
 $ionicons-font-path: "../lib/ionic/fonts" !default;

@@ -1,4 +1,4 @@
-<ion-view view-title="View Leaves" syle="background-color: #1F7FA1;" >
+<ion-view view-title="View Leaves" >
 <ion-content>
 <ion-refresher
     pulling-text="Pull down to refresh..."
@@ -16,7 +16,7 @@
 		<p ng-if="leave.isRejected && !leave.isRevoked">Rejected by {{leave.inspectedBy}}</p>
 		<p ng-if="leave.isRevoked">Revoked on {{leave.revokedOn | date:'mediumDate'}}</p>
 		<p ng-if="leave.isRevoked == false && leave.isApproved == false && leave.isRejected == false">Waiting for inspection</p>
-		<i class="icon assertive" style="font-size: 14px;" ng-if="!leave.isRevoked && !leave.isRejected" ng-click="leaves.confirmRevoke(leave)">REVOKE</i>
+		<i class="icon assertive underline" style="font-size: 14px;" ng-if="!leave.isRevoked && !leave.isRejected" ng-click="leaves.confirmRevoke(leave)">REVOKE</i>
 	</div>
 
 	<div class="item item-body item-divider">
