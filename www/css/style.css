@@ -8,6 +8,7 @@
     line-height: 1.7;
     margin-bottom: 14px;
     color: indianred;
+    font-size: 14px;
 }
 
 .approved-color {
@@ -41,3 +42,5 @@ h4, h5, h6 {
 .underline {
 	text-decoration: underline;
 }
+
+input[disabled]{background-color:red;}

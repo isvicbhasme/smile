@@ -6,12 +6,18 @@
 	</script>
   	<div class="list">
 
-	  	<div class="item item-avatar">
-		    <img src="img/gentleman.png" ng-if="profile.isFemale == null || profile.isFemale == false"></img>
-		    <img src="img/lady.png" ng-if="profile.isFemale != null && profile.isFemale == true"></img>
-		    <h2 ng-if="profile.firstName.length > 0 || profile.lastName.length > 0">{{profile.firstName}} {{profile.lastName}}</h2>
-		    <span ng-if="profile.firstName.length == 0 && profile.lastName.length == 0" class="balanced">No name</span>
-		    <p>{{profile.birthdate | date:'MMMM/dd/yyyy'}}</p>
+  		<div class="row" style="padding:0px;">
+		  	<div class="col col-20" style="padding:0px;">
+		  		<div class="item-avatar">
+				    <img src="img/gentleman.png" ng-if="profile.isFemale == null || profile.isFemale == false"></img>
+				    <img src="img/lady.png" ng-if="profile.isFemale != null && profile.isFemale == true"></img>
+			    </div>
+		    </div>
+		    <div class="col col-75 h3" style="padding:0px;">
+			    <spans  ng-if="profile.firstName.length > 0 || profile.lastName.length > 0" style="">{{profile.firstName}} {{profile.lastName}}</spans>
+			    <span ng-if="profile.firstName.length == 0 && profile.lastName.length == 0" class="balanced">No name</span>
+			    <p>{{profile.birthdate | date:'MMMM/dd/yyyy'}}</p>
+		    </div>
 	  	</div>
 	  	
 		<form name="firstNameForm" novalidate>
@@ -94,29 +100,33 @@
 
 		<form name="passwordForm" novalidate>
 		  	<!-- Password -->
-		  	<div class="card">
+
 			  <div class="item item-divider">
-			    <div class="h4" style="margin:0px;">Change password</div>
+			    <div style="text-align:center; margin-top:10px;">Change password</div>
 			  </div>
 			  <div class="item">
 			  	<div class="h5" style="color: #666; margin-bottom:0px;">Old password</div>
 			    <input type="password" placeholder="Enter old password here" name="oldPwdInput" ng-model="profile.oldPwd" style="border-bottom: 1px solid black;"/>
+			  	
 			  	<div class="h5" style="color: #666; margin-bottom:0px;">New password</div>
-			    <input type="password" placeholder="{{profile.minPasswordLength}} to {{profile.maxPasswordLength}} chars long" name="newPwdInput" ng-model="profile.newPwd" ng-required="profile.oldPwd.length > 0" ng-disabled="profile.oldPwd == NULL || profile.oldPwd.length == 0" ng-minlength="profile.minPasswordLength" ng-maxlength="profile.maxPasswordLength" style="border-bottom: 1px solid black;"/>
+			    <input type="password" placeholder="{{profile.minPasswordLength}} to {{profile.maxPasswordLength}} chars long" name="newPwdInput" ng-model="profile.newPwd" ng-required="profile.oldPwd.length > 0" ng-minlength="profile.minPasswordLength" ng-maxlength="profile.maxPasswordLength" style="border-bottom: 1px solid black;"/>
+			    
 			    <div ng-messages="passwordForm.newPwdInput.$error" ng-show="passwordForm.newPwdInput.$touched" role="alert">
 		          <div ng-messages-include="error-messages"></div>
 		          <div class="error-msg" ng-message="pattern">Enter a valid password</div>
 		          <div class="error-msg" ng-message="minlength, maxlength">Password should be {{profile.minPasswordLength}} to {{profile.maxPasswordLength}} chars wide</div>
 		        </div>
+			  	
 			  	<div class="h5" style="color: #666; margin-bottom:0px;">Confirm new password</div>
-			    <input type="password" placeholder="{{profile.minPasswordLength}} to {{profile.maxPasswordLength}} chars long" name="confPwdInput" ng-model="profile.confPwd" ng-disabled="profile.oldPwd == NULL || profile.oldPwd.length == 0" ng-required="profile.newPwd.length > 0" ng-pattern="{{passwordForm.newPwdInput.$viewValue}}" style="border-bottom: 1px solid black;"/>
+			    <input type="password" placeholder="{{profile.minPasswordLength}} to {{profile.maxPasswordLength}} chars long" name="confPwdInput" ng-model="profile.confPwd" ng-required="profile.newPwd.length > 0" ng-pattern="{{passwordForm.newPwdInput.$viewValue}}" style="border-bottom: 1px solid black;"/>
+			    
 			    <div ng-messages="passwordForm.confPwdInput.$error" ng-show="passwordForm.confPwdInput.$touched" role="alert">
 		          <div ng-messages-include="error-messages"></div>
 		          <div class="error-msg" ng-message="pattern">This should match your new password</div>
 		        </div>
 		        <button class="button button-energized button-small" style="margin-top:20px;" ng-disabled="passwordForm.$invalid || profile.oldPwd.length === 0" ng-click="savePassword()">Save password</button>
 			  </div>
-			</div>
+			
 		</form>
 
   	</div>

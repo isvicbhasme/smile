@@ -16,7 +16,8 @@
 	    	<!-- From date -->
 		    <label class="item ">
 		    	<ionic-datepicker date="data.from" min="minDate" max="maxDate" callback="fromDateCallback">
-				    <center>From date</center>
+				    <center ng-if="data.rangeSelection">Leave from</center>
+				    <center ng-if="!data.rangeSelection">Leave on</center>
 				    <button class="button button-block button-balanced rounded-corner"> {{ data.from | date:'MMMM/dd/yyyy' }} </button>
 				</ionic-datepicker>
 		    </label>
@@ -26,7 +27,7 @@
 		    <!-- To date -->
 		    <label class="item" ng-if="data.rangeSelection">
 		    	<ionic-datepicker date="data.to" min="minDate" max="maxDate" callback="toDateCallback">
-				    <center>To date</center>
+				    <center>Leave to</center>
 				    <button class="button button-block button-balanced rounded-corner"> {{ data.to | date:'MMMM/dd/yyyy' }} </button>
 				</ionic-datepicker>
 		    </label>
