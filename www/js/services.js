@@ -190,16 +190,34 @@ servicesModule.factory('CommonConstService', function(){
 
 servicesModule.factory('ConnectivityService', function($rootScope, $cordovaNetwork, $ionicPopup) {
 
+  var myPopup = null;
+
   var alertAndExit = function() {
-    $ionicPopup.alert({
+    if(myPopup != null ) {
+      myPopup.close();
+      myPopup = null;
+    }
+    myPopup = $ionicPopup.show({
+      template: '<p>Please connect to internet for using this app.</p>',
       title: 'Internet disconnected',
-      template: 'Please connect connect to internet before using this app.'
-    }).then(function() {
-      if(isOffline()) {
-        ionic.Platform.exitApp();
-      }
+      subTitle: '',
+      scope: $rootScope,
+      buttons: [
+        { 
+          text: 'Ok',
+          type: 'button-energized',
+          onTap: function(e) {
+            if (isOffline()) {
+              myPopup.close();
+              myPopup = null;
+              ionic.Platform.exitApp();
+            }
+          }
+        }
+      ]
     });
   }
+
   var isOnline = function(){
     if(ionic.Platform.isWebView()){
       return $cordovaNetwork.isOnline();    
@@ -223,6 +241,10 @@ servicesModule.factory('ConnectivityService', function($rootScope, $cordovaNetwo
 
         $rootScope.$on('$cordovaNetwork:online', function(event, networkState){
           console.log("went online");
+          if(myPopup != null) {
+            myPopup.close();
+            myPopup = null;
+          }
         });
         $rootScope.$on('$cordovaNetwork:offline', function(event, networkState){
           console.log("went offline");
@@ -232,6 +254,10 @@ servicesModule.factory('ConnectivityService', function($rootScope, $cordovaNetwo
       } else {
         window.addEventListener("online", function(e) {
           console.log("went online");
+          if(myPopup != null) {
+            myPopup.close();
+            myPopup = null;
+          }
         }, false);    
         window.addEventListener("offline", function(e) {
           console.log("went offline");

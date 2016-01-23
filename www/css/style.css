@@ -42,5 +42,3 @@ h4, h5, h6 {
 .underline {
 	text-decoration: underline;
 }
-
-input[disabled]{background-color:red;}

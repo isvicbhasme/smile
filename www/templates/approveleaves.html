@@ -25,8 +25,8 @@
 		</div>
 
 		<div class="item item-body">
-			<p ng-if="leave.to != null">{{leave.from | date:'mediumDate'}} to {{leave.to | date:'mediumDate'}}</p>
-			<p ng-if="leave.to == null">{{leave.from | date:'mediumDate'}}</p>
+			<p style="font-family:sans-serif; font-size:smaller; margin-top:0px;" ng-if="leave.to != null">Leaves from {{leave.from | date:'mediumDate'}} to {{leave.to | date:'mediumDate'}}</p>
+			<p style="font-family:sans-serif; font-size:smaller; margin-top:0px;" ng-if="leave.to == null">Leave on {{leave.from | date:'mediumDate'}}</p>
 			<p>
 				{{leave.reason}}
 			</p>
