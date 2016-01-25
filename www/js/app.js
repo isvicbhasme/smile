@@ -23,7 +23,7 @@ angular.module('app', ['ionic', 'app.controllers', 'ngMessages', 'ionic-datepick
   ConnectivityService.startWatching();
   console.log("Online state: "+ConnectivityService.isOnline());
   });
-  Parse.initialize("RAxSwXAaCAnU0gDMerYZyzlVUYG1XJPTjnf1SxkT", "i3LCpXVDwWIgUlqcEBdrncGQeBKuT9HG9lWuDrK4");
+  Parse.initialize("nHa4UYrd4OByCsQImbKL2nA7DixRqc7slJT2G5mc", "2nW2ze3NcoU350tLPZa2bSjJTDbCeslAhLi3NtPI"); //Production!
 })
 
 .config(function($stateProvider, $urlRouterProvider, $ionicConfigProvider) {
