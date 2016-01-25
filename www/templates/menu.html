@@ -14,9 +14,12 @@
 
   <ion-side-menu side="left">
     <ion-header-bar class="bar-energized">
-      <h1 class="title">Menu</h1>
+      <h1 class="title" style="position:initial;">Menu</h1>
     </ion-header-bar>
     <ion-content>
+      <div style="text-align:center;">
+        <img src="img/icon.png" style="width:50%; height:50%">
+      </div>
       <ion-list>
         <div ng-repeat="menuItem in menuItems">
           <ion-item menu-close class="item-icon-left" ng-if="menuItem.isLink" ng-href="{{menuItem.link}}">
