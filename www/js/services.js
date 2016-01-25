@@ -198,7 +198,7 @@ servicesModule.factory('ConnectivityService', function($rootScope, $cordovaNetwo
       myPopup = null;
     }
     myPopup = $ionicPopup.show({
-      template: '<p>Please connect to internet for using this app.</p>',
+      template: '<p>Please connect to internet to use this app.</p>',
       title: 'Internet disconnected',
       subTitle: '',
       scope: $rootScope,
