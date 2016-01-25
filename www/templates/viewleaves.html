@@ -4,6 +4,9 @@
     pulling-text="Pull down to refresh..."
     on-refresh="leaves.refresh()">
 </ion-refresher>
+<h5 class="padding-vertical padding-horizontal balanced" ng-if="leaves.list.length == 0">
+	Hurray! You have not applied any leave.
+</h5>
 <div class="list card" ng-repeat="leave in leaves.list">
 
 	<div class="item item-icon-left item-icon-right">
